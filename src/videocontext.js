@@ -36,7 +36,7 @@ export default class VideoContext{
     * ctx.play();
     *
     */
-    constructor(canvas, initErrorCallback, options={"preserveDrawingBuffer":true, "manualUpdate":false, "endOnLastSourceEnd":true, useVideoElementCache:true, videoElementCacheSize:6, webglContextAttributes: {preserveDrawingBuffer: true, alpha: false }}){
+    constructor(canvas, initErrorCallback, options={"preserveDrawingBuffer":true, "manualUpdate":false, "endOnLastSourceEnd":true, useVideoElementCache:true, videoElementCacheSize:1, webglContextAttributes: {preserveDrawingBuffer: true, alpha: false }}){
         this._canvas = canvas;
         let manualUpdate = false;
         this.endOnLastSourceEnd = true;
@@ -412,6 +412,9 @@ export default class VideoContext{
     play(){
         console.debug("VideoContext - playing");
         //Initialise the video elemnt cache
+        /**
+         * 调用videoElementCache对象的init方法初始化缓存
+         */
         if (this._videoElementCache)this._videoElementCache.init();
         // set the state.
         this._state = VideoContext.STATE.PLAYING;
@@ -755,6 +758,7 @@ export default class VideoContext{
 
 
     _update(dt){
+        debugger;
         //Remove any destroyed nodes
         this._sourceNodes = this._sourceNodes.filter(sourceNode=>{
             if (!sourceNode.destroyed) return sourceNode;
@@ -880,6 +884,7 @@ export default class VideoContext{
                 if (this._sourceNodes.indexOf(node) === -1){
                     node._update(this._currentTime);
                     node._render();
+                    console.log(node);
                 }
             }
         }

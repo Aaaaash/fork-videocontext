@@ -1,5 +1,5 @@
 //Matthew Shotton, R&D User Experience,© BBC 2015
-import SourceNode, { SOURCENODESTATE } from "./sourcenode";
+import SourceNode, { SOURCENODESTATE } from "./sourcenode.js";
 
 class CanvasNode extends SourceNode {
     /**

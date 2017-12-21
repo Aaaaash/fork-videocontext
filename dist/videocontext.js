@@ -138,7 +138,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    */
 	
 	    function VideoContext(canvas, initErrorCallback) {
-	        var options = arguments.length <= 2 || arguments[2] === undefined ? { "preserveDrawingBuffer": true, "manualUpdate": false, "endOnLastSourceEnd": true, useVideoElementCache: true, videoElementCacheSize: 6, webglContextAttributes: { preserveDrawingBuffer: true, alpha: false } } : arguments[2];
+	        var options = arguments.length <= 2 || arguments[2] === undefined ? { "preserveDrawingBuffer": true, "manualUpdate": false, "endOnLastSourceEnd": true, useVideoElementCache: true, videoElementCacheSize: 1, webglContextAttributes: { preserveDrawingBuffer: true, alpha: false } } : arguments[2];
 	
 	        _classCallCheck(this, VideoContext);
 	
@@ -425,6 +425,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function play() {
 	            console.debug("VideoContext - playing");
 	            //Initialise the video elemnt cache
+	            /**
+	             * 调用videoElementCache对象的init方法初始化缓存
+	             */
 	            if (this._videoElementCache) this._videoElementCache.init();
 	            // set the state.
 	            this._state = VideoContext.STATE.PLAYING;
@@ -805,6 +808,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "_update",
 	        value: function _update(dt) {
+	            debugger;
 	            //Remove any destroyed nodes
 	            this._sourceNodes = this._sourceNodes.filter(function (sourceNode) {
 	                if (!sourceNode.destroyed) return sourceNode;
@@ -1017,6 +1021,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        if (this._sourceNodes.indexOf(node) === -1) {
 	                            node._update(this._currentTime);
 	                            node._render();
+	                            console.log(node);
 	                        }
 	                    }
 	                } catch (err) {
@@ -1448,9 +1453,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var _sourcenode = __webpack_require__(2);
+	var _sourcenodeJs = __webpack_require__(2);
 	
-	var _sourcenode2 = _interopRequireDefault(_sourcenode);
+	var _sourcenodeJs2 = _interopRequireDefault(_sourcenodeJs);
 	
 	var VideoNode = (function (_SourceNode) {
 	    _inherits(VideoNode, _SourceNode);
@@ -1459,6 +1464,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	    * Initialise an instance of a VideoNode.
 	    * This should not be called directly, but created through a call to videoContext.createVideoNode();
 	    */
+	
+	    /**
+	     * src: 视频原地址 
+	     * gl: webgl绘图上下文
+	     * renderGraph: 渲染管理器RenderGraph类
+	     * currentTime：当前播放时间
+	     * globalPlaybackRate: 全局播放速度
+	     * sourceOffset: 播放起始时间点
+	     * preloadTime: 预加载时间
+	     * videoElementCache: video元素缓存
+	     * attributes： 其他属性
+	     */
 	
 	    function VideoNode(src, gl, renderGraph, currentTime) {
 	        var globalPlaybackRate = arguments.length <= 4 || arguments[4] === undefined ? 1.0 : arguments[4];
@@ -1499,6 +1516,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	
 	                if (this._element.readyState > 3 && !this._element.seeking) {
+	                    debugger;
 	                    if (this._loopElement === false) {
 	                        if (this._stopTime === Infinity || this._stopTime == undefined) {
 	                            this._stopTime = this._startTime + this._element.duration;
@@ -1512,7 +1530,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                    this._ready = true;
 	                } else {
-	                    if (this._state !== _sourcenode.SOURCENODESTATE.error) {
+	                    if (this._state !== _sourcenodeJs.SOURCENODESTATE.error) {
 	                        this._ready = false;
 	                    }
 	                }
@@ -1546,14 +1564,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	                this._element.onerror = function () {
 	                    if (_this._element === undefined) return;
 	                    console.debug("Error with element", _this._element);
-	                    _this._state = _sourcenode.SOURCENODESTATE.error;
+	                    _this._state = _sourcenodeJs.SOURCENODESTATE.error;
 	                    //Event though there's an error ready should be set to true so the node can output transparenn
 	                    _this._ready = true;
 	                    _this._triggerCallbacks("error");
 	                };
 	            } else {
 	                //If the element doesn't exist for whatever reason enter the error state.
-	                this._state = _sourcenode.SOURCENODESTATE.error;
+	                this._state = _sourcenodeJs.SOURCENODESTATE.error;
 	                this._ready = true;
 	                this._triggerCallbacks("error");
 	            }
@@ -1578,13 +1596,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: "_seek",
 	        value: function _seek(time) {
 	            _get(Object.getPrototypeOf(VideoNode.prototype), "_seek", this).call(this, time);
-	            if (this.state === _sourcenode.SOURCENODESTATE.playing || this.state === _sourcenode.SOURCENODESTATE.paused) {
+	            if (this.state === _sourcenodeJs.SOURCENODESTATE.playing || this.state === _sourcenodeJs.SOURCENODESTATE.paused) {
 	                if (this._element === undefined) this._load();
 	                var relativeTime = this._currentTime - this._startTime + this._sourceOffset;
 	                this._element.currentTime = relativeTime;
 	                this._ready = false;
 	            }
-	            if ((this._state === _sourcenode.SOURCENODESTATE.sequenced || this._state === _sourcenode.SOURCENODESTATE.ended) && this._element !== undefined) {
+	            if ((this._state === _sourcenodeJs.SOURCENODESTATE.sequenced || this._state === _sourcenodeJs.SOURCENODESTATE.ended) && this._element !== undefined) {
 	                this._unload();
 	            }
 	        }
@@ -1596,14 +1614,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            //check if the video has ended
 	            if (this._element !== undefined) {
 	                if (this._element.ended) {
-	                    this._state = _sourcenode.SOURCENODESTATE.ended;
+	                    this._state = _sourcenodeJs.SOURCENODESTATE.ended;
 	                    this._triggerCallbacks("ended");
 	                }
 	            }
 	
-	            if (this._startTime - this._currentTime < this._preloadTime && this._state !== _sourcenode.SOURCENODESTATE.waiting && this._state !== _sourcenode.SOURCENODESTATE.ended) this._load();
+	            if (this._startTime - this._currentTime < this._preloadTime && this._state !== _sourcenodeJs.SOURCENODESTATE.waiting && this._state !== _sourcenodeJs.SOURCENODESTATE.ended) this._load();
 	
-	            if (this._state === _sourcenode.SOURCENODESTATE.playing) {
+	            if (this._state === _sourcenodeJs.SOURCENODESTATE.playing) {
 	                if (this._playbackRateUpdated) {
 	                    this._element.playbackRate = this._globalPlaybackRate * this._playbackRate;
 	                    this._playbackRateUpdated = false;
@@ -1616,11 +1634,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    this._isElementPlaying = true;
 	                }
 	                return true;
-	            } else if (this._state === _sourcenode.SOURCENODESTATE.paused) {
+	            } else if (this._state === _sourcenodeJs.SOURCENODESTATE.paused) {
 	                this._element.pause();
 	                this._isElementPlaying = false;
 	                return true;
-	            } else if (this._state === _sourcenode.SOURCENODESTATE.ended && this._element !== undefined) {
+	            } else if (this._state === _sourcenodeJs.SOURCENODESTATE.ended && this._element !== undefined) {
 	                this._element.pause();
 	                if (this._isElementPlaying) {
 	                    this._unload();
@@ -1661,7 +1679,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                if (this._stretchPaused) {
 	                    this._element.pause();
 	                } else {
-	                    if (this._state === _sourcenode.SOURCENODESTATE.playing) {
+	                    if (this._state === _sourcenodeJs.SOURCENODESTATE.playing) {
 	                        this._element.play();
 	                    }
 	                }
@@ -1684,7 +1702,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }]);
 	
 	    return VideoNode;
-	})(_sourcenode2["default"]);
+	})(_sourcenodeJs2["default"]);
 	
 	exports["default"] = VideoNode;
 	module.exports = exports["default"];
@@ -1712,9 +1730,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _utilsJs = __webpack_require__(3);
 	
-	var _graphnode = __webpack_require__(26);
+	var _graphnodeJs = __webpack_require__(26);
 	
-	var _graphnode2 = _interopRequireDefault(_graphnode);
+	var _graphnodeJs2 = _interopRequireDefault(_graphnodeJs);
 	
 	var STATE = { "waiting": 0, "sequenced": 1, "playing": 2, "paused": 3, "ended": 4, "error": 5 };
 	
@@ -1781,6 +1799,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _createClass(SourceNode, [{
 	        key: "_load",
 	        value: function _load() {
+	            debugger;
 	            if (!this._loadCalled) {
 	                this._triggerCallbacks("load");
 	                this._loadCalled = true;
@@ -1891,6 +1910,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "_triggerCallbacks",
 	        value: function _triggerCallbacks(type, data) {
+	            debugger;
 	            var _iteratorNormalCompletion3 = true;
 	            var _didIteratorError3 = false;
 	            var _iteratorError3 = undefined;
@@ -1948,6 +1968,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        * @param {number} time - the time on the VideoContexts timeline to start playing.
 	        * @return {boolean} Will return true is seqeuncing has succeded, or false if it is already sequenced.
 	        */
+	        /**
+	         * videoNode调用startAt方法
+	         */
 	    }, {
 	        key: "startAt",
 	        value: function startAt(time) {
@@ -2219,7 +2242,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }]);
 	
 	    return SourceNode;
-	})(_graphnode2["default"]);
+	})(_graphnodeJs2["default"]);
 	
 	exports.SOURCENODESTATE = STATE;
 	exports["default"] = SourceNode;
@@ -2273,6 +2296,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	*/
 	
 	function compileShader(gl, shaderSource, shaderType) {
+	    debugger;
 	    var shader = gl.createShader(shaderType);
 	    gl.shaderSource(shader, shaderSource);
 	    gl.compileShader(shader);
@@ -2872,6 +2896,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	function importSimpleEDL(ctx, playlist) {
+	    debugger;
 	    // Create a "track" node to connect all the clips to.
 	    var trackNode = ctx.compositor(_DefinitionsDefinitionsJs2["default"].COMBINE);
 	
@@ -3120,6 +3145,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "_updateRAFTime",
 	        value: function _updateRAFTime(time) {
+	            debugger;
 	            if (this._previousRAFTime === undefined) this._previousRAFTime = time;
 	            var dt = (time - this._previousRAFTime) / 1000;
 	            if (dt !== 0) this._update(dt);
@@ -3129,6 +3155,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "_update",
 	        value: function _update(dt) {
+	            debugger;
 	            for (var i = 0; i < this._updateables.length; i++) {
 	                this._updateables[i]._update(parseFloat(dt));
 	            }
@@ -4361,7 +4388,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        * @param {(number| String)} [targetPort] - the port on the targetNode to connect to, this can be an index, a string identifier, or undefined (in which case the next available port will be connected to).
 	        * 
 	        */
+	        /**
+	         * 链接节点
+	         */
 	        value: function connect(targetNode, targetPort) {
+	            debugger;
 	            return this._renderGraph.registerConnection(this, targetNode, targetPort);
 	        }
 	
@@ -4515,9 +4546,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var _sourcenode = __webpack_require__(2);
+	var _sourcenodeJs = __webpack_require__(2);
 	
-	var _sourcenode2 = _interopRequireDefault(_sourcenode);
+	var _sourcenodeJs2 = _interopRequireDefault(_sourcenodeJs);
 	
 	var ImageNode = (function (_SourceNode) {
 	    _inherits(ImageNode, _SourceNode);
@@ -4557,7 +4588,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                this._element.setAttribute("crossorigin", "anonymous");
 	                this._element.src = this._elementURL;
 	                this._element.onload = function () {
-	                    console.log("image loaded!!");
 	                    _this._ready = true;
 	                    _this._triggerCallbacks("loaded");
 	                };
@@ -4571,7 +4601,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	            this._element.onerror = function () {
 	                console.debug("Error with element", _this._element);
-	                _this._state = _sourcenode.SOURCENODESTATE.error;
+	                _this._state = _sourcenodeJs.SOURCENODESTATE.error;
 	                //Event though there's an error ready should be set to true so the node can output transparenn
 	                _this._ready = true;
 	                _this._triggerCallbacks("error");
@@ -4593,10 +4623,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: "_seek",
 	        value: function _seek(time) {
 	            _get(Object.getPrototypeOf(ImageNode.prototype), "_seek", this).call(this, time);
-	            if (this.state === _sourcenode.SOURCENODESTATE.playing || this.state === _sourcenode.SOURCENODESTATE.paused) {
+	            if (this.state === _sourcenodeJs.SOURCENODESTATE.playing || this.state === _sourcenodeJs.SOURCENODESTATE.paused) {
 	                if (this._element === undefined) this._load();
 	            }
-	            if ((this._state === _sourcenode.SOURCENODESTATE.sequenced || this._state === _sourcenode.SOURCENODESTATE.ended) && this._element !== undefined) {
+	            if ((this._state === _sourcenodeJs.SOURCENODESTATE.sequenced || this._state === _sourcenodeJs.SOURCENODESTATE.ended) && this._element !== undefined) {
 	                this._unload();
 	            }
 	        }
@@ -4610,13 +4640,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                _get(Object.getPrototypeOf(ImageNode.prototype), "_update", this).call(this, currentTime);
 	            }
 	
-	            if (this._startTime - this._currentTime < this._preloadTime && this._state !== _sourcenode.SOURCENODESTATE.waiting && this._state !== _sourcenode.SOURCENODESTATE.ended) this._load();
+	            if (this._startTime - this._currentTime < this._preloadTime && this._state !== _sourcenodeJs.SOURCENODESTATE.waiting && this._state !== _sourcenodeJs.SOURCENODESTATE.ended) this._load();
 	
-	            if (this._state === _sourcenode.SOURCENODESTATE.playing) {
+	            if (this._state === _sourcenodeJs.SOURCENODESTATE.playing) {
 	                return true;
-	            } else if (this._state === _sourcenode.SOURCENODESTATE.paused) {
+	            } else if (this._state === _sourcenodeJs.SOURCENODESTATE.paused) {
 	                return true;
-	            } else if (this._state === _sourcenode.SOURCENODESTATE.ended && this._element !== undefined) {
+	            } else if (this._state === _sourcenodeJs.SOURCENODESTATE.ended && this._element !== undefined) {
 	                this._unload();
 	                return false;
 	            }
@@ -4629,7 +4659,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }]);
 	
 	    return ImageNode;
-	})(_sourcenode2["default"]);
+	})(_sourcenodeJs2["default"]);
 	
 	exports["default"] = ImageNode;
 	module.exports = exports["default"];
@@ -4655,9 +4685,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var _sourcenode = __webpack_require__(2);
+	var _sourcenodeJs = __webpack_require__(2);
 	
-	var _sourcenode2 = _interopRequireDefault(_sourcenode);
+	var _sourcenodeJs2 = _interopRequireDefault(_sourcenodeJs);
 	
 	var CanvasNode = (function (_SourceNode) {
 	    _inherits(CanvasNode, _SourceNode);
@@ -4694,11 +4724,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: "_seek",
 	        value: function _seek(time) {
 	            _get(Object.getPrototypeOf(CanvasNode.prototype), "_seek", this).call(this, time);
-	            if (this.state === _sourcenode.SOURCENODESTATE.playing || this.state === _sourcenode.SOURCENODESTATE.paused) {
+	            if (this.state === _sourcenodeJs.SOURCENODESTATE.playing || this.state === _sourcenodeJs.SOURCENODESTATE.paused) {
 	                if (this._element === undefined) this._load();
 	                this._ready = false;
 	            }
-	            if ((this._state === _sourcenode.SOURCENODESTATE.sequenced || this._state === _sourcenode.SOURCENODESTATE.ended) && this._element !== undefined) {
+	            if ((this._state === _sourcenodeJs.SOURCENODESTATE.sequenced || this._state === _sourcenodeJs.SOURCENODESTATE.ended) && this._element !== undefined) {
 	                this._unload();
 	            }
 	        }
@@ -4707,13 +4737,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function _update(currentTime) {
 	            //if (!super._update(currentTime)) return false;
 	            _get(Object.getPrototypeOf(CanvasNode.prototype), "_update", this).call(this, currentTime);
-	            if (this._startTime - this._currentTime < this._preloadTime && this._state !== _sourcenode.SOURCENODESTATE.waiting && this._state !== _sourcenode.SOURCENODESTATE.ended) this._load();
+	            if (this._startTime - this._currentTime < this._preloadTime && this._state !== _sourcenodeJs.SOURCENODESTATE.waiting && this._state !== _sourcenodeJs.SOURCENODESTATE.ended) this._load();
 	
-	            if (this._state === _sourcenode.SOURCENODESTATE.playing) {
+	            if (this._state === _sourcenodeJs.SOURCENODESTATE.playing) {
 	                return true;
-	            } else if (this._state === _sourcenode.SOURCENODESTATE.paused) {
+	            } else if (this._state === _sourcenodeJs.SOURCENODESTATE.paused) {
 	                return true;
-	            } else if (this._state === _sourcenode.SOURCENODESTATE.ended && this._element !== undefined) {
+	            } else if (this._state === _sourcenodeJs.SOURCENODESTATE.ended && this._element !== undefined) {
 	                this._unload();
 	                return false;
 	            }
@@ -4721,7 +4751,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }]);
 	
 	    return CanvasNode;
-	})(_sourcenode2["default"]);
+	})(_sourcenodeJs2["default"]);
 	
 	exports["default"] = CanvasNode;
 	module.exports = exports["default"];
@@ -4747,9 +4777,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var _processingnode = __webpack_require__(30);
+	var _processingnodeJs = __webpack_require__(30);
 	
-	var _processingnode2 = _interopRequireDefault(_processingnode);
+	var _processingnodeJs2 = _interopRequireDefault(_processingnodeJs);
 	
 	var _utilsJs = __webpack_require__(3);
 	
@@ -4827,7 +4857,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }]);
 	
 	    return CompositingNode;
-	})(_processingnode2["default"]);
+	})(_processingnodeJs2["default"]);
 	
 	exports["default"] = CompositingNode;
 	module.exports = exports["default"];
@@ -4853,9 +4883,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var _graphnode = __webpack_require__(26);
+	var _graphnodeJs = __webpack_require__(26);
 	
-	var _graphnode2 = _interopRequireDefault(_graphnode);
+	var _graphnodeJs2 = _interopRequireDefault(_graphnodeJs);
 	
 	var _utilsJs = __webpack_require__(3);
 	
@@ -4875,6 +4905,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        _classCallCheck(this, ProcessingNode);
 	
+	        debugger;
 	        _get(Object.getPrototypeOf(ProcessingNode.prototype), "constructor", this).call(this, gl, renderGraph, inputNames, limitConnections);
 	        this._vertexShader = (0, _utilsJs.compileShader)(gl, definition.vertexShader, gl.VERTEX_SHADER);
 	        this._fragmentShader = (0, _utilsJs.compileShader)(gl, definition.fragmentShader, gl.FRAGMENT_SHADER);
@@ -5119,7 +5150,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }]);
 	
 	    return ProcessingNode;
-	})(_graphnode2["default"]);
+	})(_graphnodeJs2["default"]);
 	
 	exports["default"] = ProcessingNode;
 	module.exports = exports["default"];
@@ -5168,9 +5199,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var _ProcessingNodesProcessingnode = __webpack_require__(30);
+	var _ProcessingNodesProcessingnodeJs = __webpack_require__(30);
 	
-	var _ProcessingNodesProcessingnode2 = _interopRequireDefault(_ProcessingNodesProcessingnode);
+	var _ProcessingNodesProcessingnodeJs2 = _interopRequireDefault(_ProcessingNodesProcessingnodeJs);
 	
 	var DestinationNode = (function (_ProcessingNode) {
 	    _inherits(DestinationNode, _ProcessingNode);
@@ -5186,6 +5217,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function DestinationNode(gl, renderGraph) {
 	        _classCallCheck(this, DestinationNode);
 	
+	        // 顶点着色器
 	        var vertexShader = "\
 	            attribute vec2 a_position;\
 	            attribute vec2 a_texCoord;\
@@ -5195,6 +5227,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                v_texCoord = a_texCoord;\
 	            }";
 	
+	        // 片段着色器
 	        var fragmentShader = "\
 	            precision mediump float;\
 	            uniform sampler2D u_image;\
@@ -5222,7 +5255,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            gl.enable(gl.BLEND);
 	            gl.clearColor(0, 0, 0, 0.0); // green;
 	            gl.clear(gl.COLOR_BUFFER_BIT);
-	
+	            debugger;
 	            this.inputs.forEach(function (node) {
 	                _get(Object.getPrototypeOf(DestinationNode.prototype), "_render", _this).call(_this);
 	                //map the input textures input the node
@@ -5237,6 +5270,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    for (var _iterator = _this._inputTextureUnitMapping[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 	                        var mapping = _step.value;
 	
+	                        console.log('render');
 	                        gl.activeTexture(mapping.textureUnit);
 	                        var textureLocation = gl.getUniformLocation(_this._program, mapping.name);
 	                        gl.uniform1i(textureLocation, _this._parameterTextureCount + textureOffset);
@@ -5264,7 +5298,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }]);
 	
 	    return DestinationNode;
-	})(_ProcessingNodesProcessingnode2["default"]);
+	})(_ProcessingNodesProcessingnodeJs2["default"]);
 	
 	exports["default"] = DestinationNode;
 	module.exports = exports["default"];
@@ -5290,9 +5324,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var _processingnode = __webpack_require__(30);
+	var _processingnodeJs = __webpack_require__(30);
 	
-	var _processingnode2 = _interopRequireDefault(_processingnode);
+	var _processingnodeJs2 = _interopRequireDefault(_processingnodeJs);
 	
 	var _utilsJs = __webpack_require__(3);
 	
@@ -5349,7 +5383,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }]);
 	
 	    return EffectNode;
-	})(_processingnode2["default"]);
+	})(_processingnodeJs2["default"]);
 	
 	exports["default"] = EffectNode;
 	module.exports = exports["default"];
@@ -5375,9 +5409,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var _effectnode = __webpack_require__(33);
+	var _effectnodeJs = __webpack_require__(33);
 	
-	var _effectnode2 = _interopRequireDefault(_effectnode);
+	var _effectnodeJs2 = _interopRequireDefault(_effectnodeJs);
 	
 	var TransitionNode = (function (_EffectNode) {
 	    _inherits(TransitionNode, _EffectNode);
@@ -5561,7 +5595,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }]);
 	
 	    return TransitionNode;
-	})(_effectnode2["default"]);
+	})(_effectnodeJs2["default"]);
 	
 	exports["default"] = TransitionNode;
 	module.exports = exports["default"];
@@ -5661,6 +5695,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "getInputsForNode",
 	        value: function getInputsForNode(node) {
+	            debugger;
 	            var inputNames = node.inputNames;
 	            var results = [];
 	            var namedInputs = this.getNamedInputsForNode(node);
@@ -5810,6 +5845,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "registerConnection",
 	        value: function registerConnection(sourceNode, destinationNode, target) {
+	            debugger;
 	            if (destinationNode.inputs.length >= destinationNode.inputNames.length && destinationNode._limitConnections === true) {
 	                throw new _exceptionsJs.ConnectException("Node has reached max number of inputs, can't connect");
 	            }
@@ -5827,6 +5863,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                //target is a specific
 	                this.connections.push({ "source": sourceNode, "type": "zIndex", "zIndex": target, "destination": destinationNode });
 	            } else if (typeof target === "string" && destinationNode._limitConnections) {
+	                debugger;
 	                //target is a named port
 	
 	                //make sure named port is free
@@ -5836,6 +5873,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    throw new _exceptionsJs.ConnectException("Port " + target + " is already connected to");
 	                }
 	            } else {
+	                debugger;
 	                //target is undefined so just make it a high zIndex
 	                var indexedConns = this.getZIndexInputsForNode(destinationNode);
 	                var index = 0;
@@ -6034,8 +6072,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        _classCallCheck(this, VideoElementCache);
 	
+	        debugger;
 	        this._elements = [];
 	        this._elementsInitialised = false;
+	        /**
+	         * 根据cache_size 初始化离屏video元素 缓存为this._elements数组
+	         */
 	        for (var i = 0; i < cache_size; i++) {
 	            var element = this._createElement();
 	            this._elements.push(element);
@@ -6055,6 +6097,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "init",
 	        value: function init() {
+	            /**
+	             * 如果还未init() 则给this._elements中的所有video调用play()
+	             */
 	            if (!this._elementsInitialised) {
 	                var _iteratorNormalCompletion = true;
 	                var _didIteratorError = false;
@@ -6065,6 +6110,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        var element = _step.value;
 	
 	                        try {
+	                            console.log(element);
 	                            element.play().then(function () {}, function (e) {
 	                                if (e.name !== "NotSupportedError") throw e;
 	                            });

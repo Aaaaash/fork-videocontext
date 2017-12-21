@@ -1,5 +1,5 @@
 //Matthew Shotton, R&D User Experience,© BBC 2015
-import EffectNode from "./effectnode";
+import EffectNode from "./effectnode.js";
 
 class TransitionNode extends EffectNode{
     /**

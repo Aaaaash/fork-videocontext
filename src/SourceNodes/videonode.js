@@ -1,11 +1,23 @@
 //Matthew Shotton, R&D User Experience,© BBC 2015
-import SourceNode, { SOURCENODESTATE } from "./sourcenode";
+import SourceNode, { SOURCENODESTATE } from "./sourcenode.js";
 
 class VideoNode extends SourceNode {
     /**
     * Initialise an instance of a VideoNode.
     * This should not be called directly, but created through a call to videoContext.createVideoNode();
     */
+    
+    /**
+     * src: 视频原地址 
+     * gl: webgl绘图上下文
+     * renderGraph: 渲染管理器RenderGraph类
+     * currentTime：当前播放时间
+     * globalPlaybackRate: 全局播放速度
+     * sourceOffset: 播放起始时间点
+     * preloadTime: 预加载时间
+     * videoElementCache: video元素缓存
+     * attributes： 其他属性
+     */
     constructor(src, gl, renderGraph, currentTime, globalPlaybackRate=1.0, sourceOffset=0, preloadTime = 4, videoElementCache=undefined, attributes = {}){
         super(src, gl, renderGraph, currentTime);
         this._preloadTime = preloadTime;
@@ -68,6 +80,7 @@ class VideoNode extends SourceNode {
             }
 
             if (this._element.readyState > 3 && !this._element.seeking){
+                debugger;
                 if(this._loopElement === false){
                     if (this._stopTime === Infinity || this._stopTime == undefined){
                         this._stopTime = this._startTime + this._element.duration;

@@ -13,6 +13,7 @@ import { SOURCENODESTATE } from "./SourceNodes/sourcenode.js";
 *
 */
 export function compileShader(gl, shaderSource, shaderType) {
+    debugger;
     let shader = gl.createShader(shaderType);
     gl.shaderSource(shader, shaderSource);
     gl.compileShader(shader);
@@ -517,6 +518,7 @@ export function createSigmaGraphDataFromRenderGraph(videoContext){
 
 
 export function importSimpleEDL(ctx, playlist){
+    debugger;
     // Create a "track" node to connect all the clips to.
     let trackNode = ctx.compositor(DEFINITIONS.COMBINE);
 
@@ -696,6 +698,7 @@ export class UpdateablesManager{
     }
 
     _updateRAFTime(time){
+        debugger;
         if (this._previousRAFTime === undefined)this._previousRAFTime = time;
         let dt = (time - this._previousRAFTime) / 1000;
         if (dt !== 0) this._update(dt);
@@ -704,6 +707,7 @@ export class UpdateablesManager{
     }
 
     _update(dt){
+        debugger;
         for(let i = 0; i < this._updateables.length; i++){
             this._updateables[i]._update(parseFloat(dt));
 

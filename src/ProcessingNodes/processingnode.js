@@ -1,5 +1,5 @@
 //Matthew Shotton, R&D User Experience,© BBC 2015
-import GraphNode from "../graphnode";
+import GraphNode from "../graphnode.js";
 import { compileShader, createShaderProgram, createElementTexutre, updateTexture } from "../utils.js";
 import { RenderException } from "../exceptions.js";
 
@@ -10,6 +10,7 @@ class ProcessingNode extends GraphNode{
     * This class is not used directly, but is extended to create CompositingNodes, TransitionNodes, and EffectNodes.
     */
     constructor(gl, renderGraph, definition, inputNames, limitConnections){
+        debugger;
         super(gl, renderGraph, inputNames, limitConnections);
         this._vertexShader = compileShader(gl, definition.vertexShader, gl.VERTEX_SHADER);
         this._fragmentShader = compileShader(gl, definition.fragmentShader, gl.FRAGMENT_SHADER);

@@ -81,7 +81,11 @@ class GraphNode {
     * @param {(number| String)} [targetPort] - the port on the targetNode to connect to, this can be an index, a string identifier, or undefined (in which case the next available port will be connected to).
     * 
     */
+    /**
+     * 链接节点
+     */
     connect(targetNode, targetPort){
+        debugger;
         return (this._renderGraph.registerConnection(this, targetNode, targetPort));
     }
     

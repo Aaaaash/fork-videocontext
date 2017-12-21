@@ -1,5 +1,5 @@
 //Matthew Shotton, R&D User Experience,© BBC 2015
-import ProcessingNode from "./processingnode";
+import ProcessingNode from "./processingnode.js";
 import { createElementTexutre } from "../utils.js";
 
 class CompositingNode extends ProcessingNode{

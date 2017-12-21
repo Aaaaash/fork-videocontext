@@ -1,5 +1,5 @@
 //Matthew Shotton, R&D User Experience,© BBC 2015
-import ProcessingNode from "../ProcessingNodes/processingnode";
+import ProcessingNode from "../ProcessingNodes/processingnode.js";
 
 class DestinationNode extends ProcessingNode {
     /**
@@ -11,6 +11,7 @@ class DestinationNode extends ProcessingNode {
     */
     constructor(gl, renderGraph){        
   
+        // 顶点着色器
         let vertexShader = "\
             attribute vec2 a_position;\
             attribute vec2 a_texCoord;\
@@ -20,6 +21,7 @@ class DestinationNode extends ProcessingNode {
                 v_texCoord = a_texCoord;\
             }";
 
+        // 片段着色器
         let fragmentShader = "\
             precision mediump float;\
             uniform sampler2D u_image;\
@@ -43,7 +45,7 @@ class DestinationNode extends ProcessingNode {
         gl.enable(gl.BLEND);
         gl.clearColor(0, 0, 0, 0.0); // green;
         gl.clear(gl.COLOR_BUFFER_BIT);
-
+        debugger;
         this.inputs.forEach((node)=>{
             super._render();
             //map the input textures input the node
@@ -51,6 +53,7 @@ class DestinationNode extends ProcessingNode {
             let textureOffset = 0;
 
             for(let mapping of this._inputTextureUnitMapping ){
+                console.log('render');
                 gl.activeTexture(mapping.textureUnit);
                 let textureLocation = gl.getUniformLocation(this._program, mapping.name);
                 gl.uniform1i(textureLocation, this._parameterTextureCount + textureOffset);

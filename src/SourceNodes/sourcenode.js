@@ -1,6 +1,6 @@
 //Matthew Shotton, R&D User Experience,© BBC 2015
 import { updateTexture, clearTexture, createElementTexutre } from "../utils.js";
-import GraphNode from "../graphnode";
+import GraphNode from "../graphnode.js";
 
 let STATE = {"waiting":0, "sequenced":1, "playing":2, "paused":3, "ended":4, "error":5};
 
@@ -125,6 +125,7 @@ class SourceNode extends GraphNode{
     }
 
     _load(){
+        debugger;
         if (!this._loadCalled){
             this._triggerCallbacks("load");
             this._loadCalled = true;
@@ -186,6 +187,7 @@ class SourceNode extends GraphNode{
     }
 
     _triggerCallbacks(type, data){
+        debugger;
         for(let callback of this._callbacks){
             if (callback.type === type){
                 if (data!== undefined){
@@ -220,6 +222,9 @@ class SourceNode extends GraphNode{
     * @param {number} time - the time on the VideoContexts timeline to start playing.
     * @return {boolean} Will return true is seqeuncing has succeded, or false if it is already sequenced.
     */
+    /**
+     * videoNode调用startAt方法
+     */
     startAt(time){
         if (this._state !== STATE.waiting){
             console.debug("SourceNode is has already been sequenced. Can't sequence twice.");

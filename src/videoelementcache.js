@@ -9,8 +9,12 @@ function stripHash (url){
 class VideoElementCache {
 
     constructor(cache_size = 3) {
+        debugger;
         this._elements = [];
         this._elementsInitialised = false;
+        /**
+         * 根据cache_size 初始化离屏video元素 缓存为this._elements数组
+         */
         for (let i = 0; i < cache_size; i++) {
             let element = this._createElement();            
             this._elements.push(element);
@@ -28,9 +32,13 @@ class VideoElementCache {
     }
 
     init(){
+        /**
+         * 如果还未init() 则给this._elements中的所有video调用play()
+         */
         if (!this._elementsInitialised){
             for(let element of this._elements){
                 try {
+                    console.log(element);
                     element.play().then(()=>{
                     }, (e)=>{
                         if (e.name !== "NotSupportedError")throw(e);
