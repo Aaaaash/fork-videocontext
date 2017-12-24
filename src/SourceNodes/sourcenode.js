@@ -6,26 +6,28 @@ let STATE = {"waiting":0, "sequenced":1, "playing":2, "paused":3, "ended":4, "er
 
 class SourceNode extends GraphNode{
     /**
-    * Initialise an instance of a SourceNode.
-    * This is the base class for other Nodes which generate media to be passed into the processing pipeline.
+    * 初始化一个SourceNode实例
+    * 这是生成要传递到处理管道的介质的其他节点的基类
+    * 参数为一个源数据的src，webgl对象，图形渲染对象，当前播放时间点
     */
     constructor(src, gl, renderGraph, currentTime){
+        // 调用父类的constructor方法并传递参数
         super(gl,renderGraph, [], true);
         this._element = undefined;
         this._elementURL = undefined;
         this._isResponsibleForElementLifeCycle = true;
 
         if (typeof src === "string" || (window.MediaStream !== undefined && src instanceof MediaStream)){
-            //create the node from the passed URL or MediaStream
+            // 从传递的url或MediaStream中创建节点
             this._elementURL = src;
         }else{
-            //use the passed element to create the SourceNode
+            // 使用传递的元素来创建SourceNode
             this._element = src;
             this._isResponsibleForElementLifeCycle = false;
         }
         
   
-
+        // 初始化属性
         this._state = STATE.waiting;
         this._currentTime = currentTime;
         this._startTime = NaN;
@@ -33,7 +35,9 @@ class SourceNode extends GraphNode{
         this._ready = false;
         this._loadCalled = false;
         this._stretchPaused = false;
+        // 创建一个webgl纹理
         this._texture = createElementTexutre(gl);
+        // 为webgl对象初始化一个2d纹理图像
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0,0,0,0]));
         this._callbacks = [];
         this._renderPaused = false;
@@ -42,16 +46,16 @@ class SourceNode extends GraphNode{
     }
 
     /**
-    * Returns the state of the node.
-    * 0 - Waiting, start() has not been called on it yet.
-    * 1 - Sequenced, start() has been called but it is not playing yet.
-    * 2 - Playing, the node is playing.
-    * 3 - Paused, the node is paused.
-    * 4 - Ended, playback of the node has finished.
+    * 返回节点的状态
+    * 0 - Waiting, start() 方法还未被调用
+    * 1 - Sequenced, start() 已经被调用但还没有开始播放
+    * 2 - Playing, 节点正在播放
+    * 3 - Paused, 节点暂停播放
+    * 4 - Ended, 播放结束
     *
-    * @example
+    * @example 示例
     * var ctx = new VideoContext();
-    * var videoNode = ctx.createVideoSourceNode('video.mp4');
+    * var videoNode = ctx.video('video.mp4');
     * console.log(videoNode.state); //will output 0 (for waiting)
     * videoNode.start(5);
     * console.log(videoNode.state); //will output 1 (for sequenced)
@@ -67,31 +71,19 @@ class SourceNode extends GraphNode{
 
 
     /**
-    * Returns the underlying DOM element which represents this source node.
-    * Note: If a source node is created with a url rather than passing in an existing element then this will return undefined until the source node preloads the element.
+    * 返回表示此源节点的底层DOM元素
+    * Note: 如果使用url创建源节点而不是传入现有元素，那么将返回undefined，直到源节点预加载元素
     *
-    * @return {Element} The underlying DOM element representing the media for the node. If the lifecycle of the video is owned UNSIGNED_BYTE the node itself, this can return undefined if the element hasn't been loaded yet.
+    * @return {Element} 底层DOM元素表示节点的媒体
     *
-    * @example
-    * //Accessing the Element on a VideoNode created via a URL
+    * @example 示例
+    * // 访问通过URL创建的VideoNode上的元素
     * var ctx = new VideoContext();
     * var videoNode = ctx.createVideoSourceNode('video.mp4');
     * videoNode.start(0);
     * videoNode.stop(5);
-    * //When the node starts playing the element should exist so set it's volume to 0
+    * // 节点开始播放时，元素应该存在，因此将音量设置为0
     * videoNode.regsiterCallback("play", function(){videoNode.element.volume = 0;});
-    *
-    *
-    * @example
-    * //Accessing the Element on a VideoNode created via an already existing element
-    * var ctx = new VideoContext();
-    * var videoElement = document.createElement("video");
-    * var videoNode = ctx.createVideoSourceNode(videoElement);
-    * videoNode.start(0);
-    * videoNode.stop(5);
-    * //The elemnt can be accessed any time because it's lifecycle is managed outside of the VideoContext
-    * videoNode.element.volume = 0;
-    *
     */
     get element(){
         return this._element;
@@ -99,11 +91,12 @@ class SourceNode extends GraphNode{
 
 
     /**
-    * Returns the duration of the node on a timeline. If no start time is set will return undefiend, if no stop time is set will return Infinity.
+    * 返回时间轴上节点的持续时间 如果没有开始时间设置将返回undefiend
+    * 如果没有设置停止时间将返回无穷大
     *
-    * @return {number} The duration of the node in seconds.
+    * @return {number} 时间轴上节点的持续时间
     *
-    * @example
+    * @example 示例
     * var ctx = new VideoContext();
     * var videoNode = ctx.createVideoSourceNode('video.mp4');
     * videoNode.start(5);
@@ -124,25 +117,27 @@ class SourceNode extends GraphNode{
         return this._stretchPaused;
     }
 
+    // 加载
     _load(){
         if (!this._loadCalled){
             this._triggerCallbacks("load");
             this._loadCalled = true;
         }
     }
-
+    // 卸载
     _unload (){
         this._triggerCallbacks("destroy");
         this._loadCalled = false;
     }
 
     /**
-    * Register callbacks against one of these events: "load", "destroy", "seek", "pause", "play", "ended", "durationchange", "loaded", "error"
+    * 注册这些事件之一的回调函数
+    * “load”，“destroy”，“seek”，“pause”，“play”，“ended”，“durationchange”，“loaded”，“error”
     *
-    * @param {String} type - the type of event to register the callback against.
-    * @param {function} func - the function to call.
+    * @param {String} type - 事件类型
+    * @param {function} func - 回调函数
     *
-    * @example
+    * @example 示例
     * var ctx = new VideoContext();
     * var videoNode = ctx.createVideoSourceNode('video.mp4');
     *
@@ -156,22 +151,23 @@ class SourceNode extends GraphNode{
     }
 
     /**
-    * Remove callback.
+    * 注销回调函数
     *
-    * @param {function} [func] - the callback to remove, if undefined will remove all callbacks for this node.
+    * @param {function} [func] - 需要注销的回调函数
     *
-    * @example
+    * @example 示例
     * var ctx = new VideoContext();
     * var videoNode = ctx.createVideoSourceNode('video.mp4');
     *
     * videoNode.registerCallback("load", function(){"video is loading"});
     * videoNode.registerCallback("play", function(){"video is playing"});
     * videoNode.registerCallback("ended", function(){"video has eneded"});
-    * videoNode.unregisterCallback(); //remove all of the three callbacks.
+    * videoNode.unregisterCallback(); // 注销所有回调函数
     *
     */
     unregisterCallback(func){
         let toRemove = [];
+        // 如果参数为undefined，则注销所有回调函数
         for(let callback of this._callbacks){
             if (func === undefined){
                 toRemove.push(callback);
@@ -185,6 +181,7 @@ class SourceNode extends GraphNode{
         }
     }
 
+    // 触发一个回调函数
     _triggerCallbacks(type, data){
         for(let callback of this._callbacks){
             if (callback.type === type){
@@ -198,10 +195,10 @@ class SourceNode extends GraphNode{
     }
 
     /**
-    * Start playback at VideoContext.currentTime plus passed time. If passed time is negative, will play as soon as possible.
+    * 在VideoContext.currentTime+传递时间时开始播放。 如果通过的时间是负面的，将尽快播放
     *
-    * @param {number} time - the time from the currentTime of the VideoContext which to start playing, if negative will play as soon as possible.
-    * @return {boolean} Will return true is seqeuncing has succeded, or false if it is already sequenced.
+    * @param {number} time - 播放时间
+    * @return {boolean}
     */
     start(time){
         if (this._state !== STATE.waiting){
@@ -215,14 +212,11 @@ class SourceNode extends GraphNode{
     }
 
     /**
-    * Start playback at an absolute time ont the VideoContext's timeline.
+    * 在VideoContext的时间轴上绝对时间开始播放
     *
-    * @param {number} time - the time on the VideoContexts timeline to start playing.
-    * @return {boolean} Will return true is seqeuncing has succeded, or false if it is already sequenced.
+    * @param {number} time - 播放时间
+    * @return {boolean}
     */
-    /**
-     * videoNode调用startAt方法
-     */
     startAt(time){
         if (this._state !== STATE.waiting){
             console.debug("SourceNode is has already been sequenced. Can't sequence twice.");
@@ -240,10 +234,10 @@ class SourceNode extends GraphNode{
 
 
     /**
-    * Stop playback at VideoContext.currentTime plus passed time. If passed time is negative, will play as soon as possible.
+    * 在VideoContext.currentTime + 传递时间时停止播放。 如果通过的时间是负面的，将尽快停止
     *
-    * @param {number} time - the time from the currentTime of the video context which to stop playback.
-    * @return {boolean} Will return true is seqeuncing has succeded, or false if the playback has already ended or if start hasn't been called yet, or if time is less than the start time.
+    * @param {number} time - 停止时间
+    * @return {boolean}
     */
     stop(time){
         if (this._state === STATE.ended){
@@ -264,10 +258,10 @@ class SourceNode extends GraphNode{
     }
 
     /**
-    * Stop playback at an absolute time ont the VideoContext's timeline.
+    * 在VideoContext的时间轴上绝对时间停止播放
     *
-    * @param {number} time - the time on the VideoContexts timeline to stop playing.
-    * @return {boolean} Will return true is seqeuncing has succeded, or false if the playback has already ended or if start hasn't been called yet, or if time is less than the start time.
+    * @param {number} time - 停止时间
+    * @return {boolean}
     */
     stopAt(time){
         if (this._state === STATE.ended){
@@ -293,6 +287,7 @@ class SourceNode extends GraphNode{
     }
 
 
+    // 跳转时间点
     _seek(time){
         this._renderPaused = false;
 
@@ -311,10 +306,11 @@ class SourceNode extends GraphNode{
             this._triggerCallbacks("ended");
             this._state = STATE.ended;
         }
-        //update the current time
+        // 更新当前时间
         this._currentTime = time;
     }
 
+    // 暂停
     _pause(){
         if(this._state === STATE.playing || (this._currentTime === 0 && this._startTime === 0)){
             this._triggerCallbacks("pause");
@@ -322,8 +318,8 @@ class SourceNode extends GraphNode{
             this._renderPaused = false;
         }
     }
+    // 播放
     _play(){
-
         if(this._state === STATE.paused){
             this._triggerCallbacks("play");
             this._state = STATE.playing;
@@ -337,14 +333,19 @@ class SourceNode extends GraphNode{
         return true;
     }
 
+    /**
+     * 
+     * @param {number} 当前时间 
+     * @param {boolean} 是否更新纹理图像 
+     */
     _update(currentTime, triggerTextureUpdate=true){
         this._rendered = true;
         let timeDelta = currentTime - this._currentTime;
 
-        //update the current time
+        // 更新当前时间
         this._currentTime = currentTime;
 
-        //update the state
+        // 更新状态
         if (this._state === STATE.waiting || this._state === STATE.ended || this._state === STATE.error) return false;
 
         this._triggerCallbacks("render", currentTime);
@@ -367,7 +368,7 @@ class SourceNode extends GraphNode{
             this._state = STATE.ended;
         }
 
-        //update this source nodes texture
+        // 更新源节点的纹理图像
         if (this._element === undefined) return true;
 
         if (!this._renderPaused && this._state === STATE.paused) {
@@ -385,7 +386,7 @@ class SourceNode extends GraphNode{
     }
 
     /**
-    * Clear any timeline state the node currently has, this puts the node in the "waiting" state, as if neither start nor stop had been called.
+    * 清除节点当前拥有的任何时间线状态，这将节点置于“等待”状态，就好像既没有启动也没有停止
     */
     clearTimelineState(){
         this._startTime = NaN;
@@ -394,7 +395,7 @@ class SourceNode extends GraphNode{
     }
 
     /**
-    * Destroy and clean-up the node.
+    * 销毁并清除这个节点
     */
     destroy(){
         this._unload();

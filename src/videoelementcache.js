@@ -22,6 +22,7 @@ class VideoElementCache {
 
 
     _createElement(){
+        // 创建video元素
         let videoElement = document.createElement("video");
         videoElement.setAttribute("crossorigin", "anonymous");
         videoElement.setAttribute("webkit-playsinline", "");
@@ -50,12 +51,12 @@ class VideoElementCache {
     }
 
     get() {
-        //Try and get an already intialised element.
+        // 尝试并获得一个已经初始化的元素。
         for (let element of this._elements) {
-            // For some reason an uninitialised videoElement has its sr attribute set to the windows href. Hence the below check.
+            // 出于某种原因，未初始化的videoElement的src属性设置为windows href。 因此做下面的检查。
             if ((element.src === "" || element.src === undefined || element.src === stripHash(window.location)) && element.srcObject == null )return element;
         }
-        //Fallback to creating a new element if non exists.
+        // 如果不存在，则回退到创建新元素。
         console.debug("No available video element in the cache, creating a new one. This may break mobile, make your initial cache larger.");
         let element = this._createElement();
         this._elements.push(element);
@@ -68,9 +69,9 @@ class VideoElementCache {
     }
 
     get unused(){
+        // 获取尚未使用的video元素
         let count = 0;
         for (let element of this._elements) {
-            // For some reason an uninitialised videoElement has its sr attribute set to the windows href. Hence the below check.
             if ((element.src === "" || element.src === undefined || element.src === stripHash(window.location))  && element.srcObject == null )count += 1;
         }
         return count;
