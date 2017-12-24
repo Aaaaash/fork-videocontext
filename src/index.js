@@ -8,34 +8,42 @@ const videos = [
     "../docs/assets/bg.mp4",
 ];
 
-// const videoNode = videoctx.video("../docs/assets/bg.mp4");
-// // videoNode.startAt(0);
-const videoNode = videoctx.video("../docs/assets/movie.mkv");
-videoNode.startAt(0);
-// const cropRect = [0.5, 0.5, 1.0, 1.0];
-// const dstRect = [0.5, 0.5, 1.0, 1.0];
+const combineDefinition = {
+    title: "combineDefinition",
+    vertexShader : "\
+        attribute vec2 a_position;\
+        attribute vec2 a_texCoord;\
+        varying vec2 v_texCoord;\
+        void main() {\
+            gl_Position = vec4(vec2(2.0,2.0)*vec2(1.0, 1.0), 0.0, 1.0);\
+            v_texCoord = a_texCoord;\
+        }",
+    fragmentShader : "\
+        precision mediump float;\
+        uniform sampler2D u_image;\
+        uniform float a;\
+        varying vec2 v_texCoord;\
+        varying float v_progress;\
+        void main(){\
+            vec4 color = texture2D(u_image, v_texCoord);\
+            gl_FragColor = color;\
+        }",
+    properties:{
+        "a":{type:"uniform", value:0.0},
+    },
+    inputs:["u_image"]
+};
+const trackNode = videoctx.compositor(combineDefinition);
 
-// const scale = 480 / 480;
-// const scaleWidth = 852 * scale;
-// if (scaleWidth >= 852) {
-//     const padw = (scaleWidth - 852) / 2.0;
-//     cropRect[0] = padw / scaleWidth;
-//     cropRect[1] = 0.0;
-//     cropRect[2] = 852 / scaleWidth;
-//     cropRect[3] = 1.0;
-// } else {
-//     const padw = (852 - scaleWidth) / 2.0;
-//     dstRect[0] = padw / 852;
-//     dstRect[1] = 0.0;
-//     dstRect[2] = scaleWidth / 852;
-//     dstRect[3] = 1.0;
-// }
+const videoNode = videoctx.video(videos[0]);
+videoNode.start(0);
+videoNode.stop(10);
+const videoNode2 = videoctx.video(videos[1]);
+videoNode2.start(0);
+videoNode2.stop(10);
 
-// const cropWidthNode = videoctx.effect(VideoContext.DEFINITIONS.CROP_WIDTH);
-// cropWidthNode.cropRect = cropRect;
-// cropWidthNode.dstRect = dstRect;
-
-// videoNode2.connect(videoNode);
-videoNode.connect(videoctx.destination);
+videoNode.connect(trackNode);
+videoNode2.connect(trackNode);
+trackNode.connect(videoctx.destination);
 
 videoctx.play();

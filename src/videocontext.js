@@ -400,8 +400,8 @@ export default class VideoContext{
     }
 
     /**
-    * Start the VideoContext playing
-    * @example
+    * 开始播放
+    * @example 示例
     * var canvasElement = document.getElementById("canvas");
     * var ctx = new VideoContext(canvasElement);
     * var videoNode = ctx.video("video.mp4");
@@ -412,10 +412,7 @@ export default class VideoContext{
     */
     play(){
         console.debug("VideoContext - playing");
-        //Initialise the video elemnt cache
-        /**
-         * 调用videoElementCache对象的init方法初始化缓存
-         */
+        // 调用videoElementCache对象的init方法初始化video元素缓存
         if (this._videoElementCache)this._videoElementCache.init();
         // set the state.
         this._state = VideoContext.STATE.PLAYING;
@@ -423,8 +420,8 @@ export default class VideoContext{
     }
 
     /**
-    * Pause playback of the VideoContext
-    * @example
+    * 暂停播放
+    * @example 示例
     * var canvasElement = document.getElementById("canvas");
     * var ctx = new VideoContext(canvasElement);
     * var videoNode = ctx.video("video.mp4");
@@ -443,20 +440,20 @@ export default class VideoContext{
 
 
     /**
-    * Create a new node representing a video source
+    * 创建一个新的video节点
     *
-    * @param {string|Video} - The URL or video element to create the video from.
-    * @sourceOffset {number} - Offset into the start of the source video to start playing from.
-    * @preloadTime {number} - How many seconds before the video is to be played to start loading it.
-    * @videoElementAttributes {Object} - A dictionary of attributes to map onto the underlying video element.
-    * @return {VideoNode} A new video node.
+    * @param {string|Video} - 视频播放地址或者video元素
+    * @sourceOffset {number} - 起始时间
+    * @preloadTime {number} - 延迟播放时间
+    * @videoElementAttributes {Object} - video元素的属性
+    * @return {VideoNode} video节点
     *
-    * @example
+    * @example 示例
     * var canvasElement = document.getElementById("canvas");
     * var ctx = new VideoContext(canvasElement);
     * var videoNode = ctx.video("video.mp4");
     *
-    * @example
+    * @example 示例
     * var canvasElement = document.getElementById("canvas");
     * var videoElement = document.getElementById("video");
     * var ctx = new VideoContext(canvasElement);
@@ -470,6 +467,7 @@ export default class VideoContext{
 
     /**
     * @depricated
+    * 即将删除
     */
     createVideoSourceNode(src, sourceOffset=0, preloadTime=4, videoElementAttributes={}){
         this._depricate("Warning: createVideoSourceNode will be depricated in v1.0, please switch to using VideoContext.video()");
@@ -478,18 +476,18 @@ export default class VideoContext{
 
 
     /**
-    * Create a new node representing an image source
-    * @param {string|Image} src - The url or image element to create the image node from.
-    * @param {number} [preloadTime] - How long before a node is to be displayed to attmept to load it.
-    * @param {Object} [imageElementAttributes] - Any attributes to be given to the underlying image element.
-    * @return {ImageNode} A new image node.
+    * 创建一个新的图像节点
+    * @param {string|Image} src - 图像url或image元素
+    * @param {number} [preloadTime] - 延迟显示时间
+    * @param {Object} [imageElementAttributes] - image元素的属性
+    * @return {ImageNode} image节点
     *
-    * @example
+    * @example 示例
     * var canvasElement = document.getElementById("canvas");
     * var ctx = new VideoContext(canvasElement);
     * var imageNode = ctx.image("image.png");
     *
-    * @example
+    * @example 示例
     * var canvasElement = document.getElementById("canvas");
     * var imageElement = document.getElementById("image");
     * var ctx = new VideoContext(canvasElement);
@@ -502,7 +500,7 @@ export default class VideoContext{
     }
 
     /**
-    * @depricated
+    * 即将删除
     */
     createImageSourceNode(src, sourceOffset=0, preloadTime=4, imageElementAttributes={}){
         this._depricate("Warning: createImageSourceNode will be depricated in v1.0, please switch to using VideoContext.image()");
@@ -511,9 +509,9 @@ export default class VideoContext{
 
 
     /**
-    * Create a new node representing a canvas source
-    * @param {Canvas} src - The canvas element to create the canvas node from.
-    * @return {CanvasNode} A new canvas node.
+    * 创建一个新的canvas节点
+    * @param {Canvas} src - canvas元素
+    * @return {CanvasNode} canvas节点
     */
     canvas(canvas){
         let canvasNode = new CanvasNode(canvas, this._gl, this._renderGraph, this._currentTime);
@@ -522,7 +520,7 @@ export default class VideoContext{
     }
 
     /**
-    * @depricated
+    * 即将删除
     */
     createCanvasSourceNode(canvas, sourceOffset=0, preloadTime=4){
         this._depricate("Warning: createCanvasSourceNode will be depricated in v1.0, please switch to using VideoContext.canvas()");
@@ -531,19 +529,18 @@ export default class VideoContext{
 
 
     /**
-    * Create a new effect node.
-    * @param {Object} definition - this is an object defining the shaders, inputs, and properties of the compositing node to create. Builtin definitions can be found by accessing VideoContext.DEFINITIONS.
-    * @return {EffectNode} A new effect node created from the passed definition
+    * 创建一个新的特效节点
+    * @param {Object} definition - 用于定义合成节点着色器的对象，内置着色器可通过VideoContext.DEFINITIONS访问调用
+    * @return {EffectNode} 合成节点
     */
     effect(definition){
-        debugger;
         let effectNode = new EffectNode(this._gl, this._renderGraph, definition);
         this._processingNodes.push(effectNode);
         return effectNode;
     }
 
     /**
-    * @depricated
+    * 即将删除
     */
     createEffectNode(definition){
         this._depricate("Warning: createEffectNode will be depricated in v1.0, please switch to using VideoContext.effect()");
@@ -551,23 +548,22 @@ export default class VideoContext{
     }
 
     /**
-    * Create a new compositiing node.
+    * 创建一个新的合成节点
     *
-    * Compositing nodes are used for operations such as combining multiple video sources into a single track/connection for further processing in the graph.
+    * 合成节点用于将多个视频组合成一个时间轴用于图形渲染器进行进一步处理
+    * 合成节点较为特殊，它只有一个输入，但是可以与N多个节点连接
+    * 为合成节点定义的着色器程序将会依次为每个输入运行，并将结果输出到缓冲区
+    * 这意味着在合成节点中每一个独立的输入之间不会有影响，因为它们在单独的着色器通道中进行处理
+    * @param {Object} definition - 用于定义合成节点着色器的对象，内置着色器可通过VideoContext.DEFINITIONS访问调用
     *
-    * A compositing node is slightly different to other processing nodes in that it only has one input in it's definition but can have unlimited connections made to it.
-    * The shader in the definition is run for each input in turn, drawing them to the output buffer. This means there can be no interaction between the spearte inputs to a compositing node, as they are individually processed in seperate shader passes.
+    * @return {CompositingNode} 新的合成节点
     *
-    * @param {Object} definition - this is an object defining the shaders, inputs, and properties of the compositing node to create. Builtin definitions can be found by accessing VideoContext.DEFINITIONS
-    *
-    * @return {CompositingNode} A new compositing node created from the passed definition.
-    *
-    * @example
+    * @example 示例
     *
     * var canvasElement = document.getElementById("canvas");
     * var ctx = new VideoContext(canvasElement);
     *
-    * //A simple compositing node definition which just renders all the inputs to the output buffer.
+    * // 着色器定义对象
     * var combineDefinition = {
     *     vertexShader : "\
     *         attribute vec2 a_position;\
@@ -592,10 +588,10 @@ export default class VideoContext{
     *     },
     *     inputs:["u_image"]
     * };
-    * //Create the node, passing in the definition.
+    * // 通过着色器定义创建一个合成节点
     * var trackNode = videoCtx.compositor(combineDefinition);
     *
-    * //create two videos which will play at back to back
+    * // 创建两个连续播放的video节点
     * var videoNode1 = ctx.video("video1.mp4");
     * videoNode1.play(0);
     * videoNode1.stop(10);
@@ -603,12 +599,11 @@ export default class VideoContext{
     * videoNode2.play(10);
     * videoNode2.stop(20);
     *
-    * //Connect the nodes to the combine node. This will give a single connection representing the two videos which can
-    * //be connected to other effects such as LUTs, chromakeyers, etc.
+    * // 将两个节点分别连接到合成节点，这将产生一个单一的连接，表示两个视频可以连接到其他效果
     * videoNode1.connect(trackNode);
     * videoNode2.connect(trackNode);
     *
-    * //Don't do anything exciting, just connect it to the output.
+    * // 只需要把合成节点连接到输出
     * trackNode.connect(ctx.destination);
     *
     */
@@ -619,7 +614,7 @@ export default class VideoContext{
     }
 
     /**
-    * @depricated
+    * 即将删除
     */
     createCompositingNode(definition){
         this._depricate("Warning: createCompositingNode will be depricated in v1.0, please switch to using VideoContext.compositor()");
@@ -629,24 +624,25 @@ export default class VideoContext{
 
 
     /**
-    * Create a new transition node.
+    * 创建一个新的过渡节点
     *
-    * Transistion nodes are a type of effect node which have parameters which can be changed as events on the timeline.
+    * 过渡节点是一种特效节点类型，参数可以在时间轴上作为事件进行更改
     *
-    * For example a transition node which cross-fades between two videos could have a "mix" property which sets the
-    * progress through the transistion. Rather than having to write your own code to adjust this property at specfic
-    * points in time a transition node has a "transition" function which takes a startTime, stopTime, targetValue, and a
-    * propertyName (which will be "mix"). This will linearly interpolate the property from the curernt value to
-    * tragetValue between the startTime and stopTime.
+    * 例如，在两个视频之间插入一个淡入淡出的过渡节点，它可能需要一个“mix”属性
+    * 这个属性通过transition函数来设定进度
+    * 转换节点不需要编写自己的代码来在特定时间调整该属性，而是通过一个transition函数
+    * transition函数需要一个startTime，stopTime，targetValue和属性名(mix)
+    * 这将从startTime和stopTime之间线性插入current值到targetValue属性
+    * 
     *
-    * @param {Object} definition - this is an object defining the shaders, inputs, and properties of the transition node to create.
-    * @return {TransitionNode} A new transition node created from the passed definition.
+    * @param {Object} definition - 用于定义合成节点着色器的对象，内置着色器可通过VideoContext.DEFINITIONS访问调用
+    * @return {TransitionNode} 过渡节点
     * @example
     *
     * var canvasElement = document.getElementById("canvas");
     * var ctx = new VideoContext(canvasElement);
     *
-    * //A simple cross-fade node definition which cross-fades between two videos based on the mix property.
+    * // 两个视频之间淡入效果的着色器定义
     * var crossfadeDefinition = {
     *     vertexShader : "\
     *        attribute vec2 a_position;\
@@ -682,10 +678,10 @@ export default class VideoContext{
     *     inputs:["u_image_a","u_image_b"]
     * };
     *
-    * //Create the node, passing in the definition.
+    * // 通过着色器定义创建一个新的过渡节点
     * var transitionNode = videoCtx.transition(crossfadeDefinition);
     *
-    * //create two videos which will overlap by two seconds
+    * // 创建两个将会重叠2秒的视频节点
     * var videoNode1 = ctx.video("video1.mp4");
     * videoNode1.play(0);
     * videoNode1.stop(10);
@@ -693,17 +689,17 @@ export default class VideoContext{
     * videoNode2.play(8);
     * videoNode2.stop(18);
     *
-    * //Connect the nodes to the transistion node.
+    * // 分别连接到过渡节点
     * videoNode1.connect(transitionNode);
     * videoNode2.connect(transitionNode);
     *
-    * //Set-up a transition which happens at the crossover point of the playback of the two videos
+    * // 设置在两个视频重叠时间点将会发生的转换
     * transitionNode.transition(8,10,1.0,"mix");
     *
-    * //Connect the transition node to the output
+    * // 连接过渡节点到输出
     * transitionNode.connect(ctx.destination);
     *
-    * //start playback
+    * // 开始播放
     * ctx.play();
     */
     transition(definition){
@@ -713,7 +709,7 @@ export default class VideoContext{
     }
 
     /**
-    * @depricated
+    * 即将删除
     */
     createTransitionNode(definition){
         this._depricate("Warning: createTransitionNode will be depricated in v1.0, please switch to using VideoContext.transition()");
@@ -722,7 +718,9 @@ export default class VideoContext{
 
 
 
-
+    /**
+     * 返回视频播放是否为停滞状态
+     */
     _isStalled(){
         for (let i = 0; i < this._sourceNodes.length; i++) {
             let sourceNode = this._sourceNodes[i];
@@ -735,10 +733,10 @@ export default class VideoContext{
 
 
     /**
-    * This allows manual calling of the update loop of the videoContext.
+    * 用于手动调用videocontext的更新循环
     *
-    * @param {Number} dt - The difference in seconds between this and the previous calling of update.
-    * @example
+    * @param {Number} dt - 与之前更新调用之间的时间差
+    * @example 示例
     *
     * var canvasElement = document.getElementById("canvas");
     * var ctx = new VideoContext(canvasElement, undefined, {"manualUpdate" : true});
@@ -760,7 +758,7 @@ export default class VideoContext{
 
 
     _update(dt){
-        //Remove any destroyed nodes
+        // 删除所有已销毁的节点
         this._sourceNodes = this._sourceNodes.filter(sourceNode=>{
             if (!sourceNode.destroyed) return sourceNode;
         });
@@ -783,18 +781,18 @@ export default class VideoContext{
             }
 
             if(this._state === VideoContext.STATE.PLAYING){
-                //Handle timeline callbacks.
+                // 处理时间线的回调函数
                 let activeCallbacks = new Map();
                 for(let callback of this._timelineCallbacks){
                     if (callback.time >= this.currentTime && callback.time < (this._currentTime + dt * this._playbackRate)){
-                        //group the callbacks by time
+                        // 按播放时间将回调函数分组
                         if(!activeCallbacks.has(callback.time)) activeCallbacks.set(callback.time, []);
                         activeCallbacks.get(callback.time).push(callback);
                     }
                 }
 
 
-                //Sort the groups of callbacks by the times of the groups
+                // 将回调函数组排序
                 let timeIntervals = Array.from(activeCallbacks.keys());
                 timeIntervals.sort(function(a, b){
                     return a - b;
@@ -812,7 +810,7 @@ export default class VideoContext{
 
                 this._currentTime += dt * this._playbackRate;
                 if(this._currentTime > this.duration && this._endOnLastSourceEnd){
-                    //Do an update od the sourcenodes in case anything in the "ended" callbacks modifes currentTime and sources haven't had a chance to stop.
+                    // 如果源文件并没有停止播放，且“ended”回调中任何内容修改为currentTime，则更新源节点
                     for (let i = 0; i < this._sourceNodes.length; i++) {
                         this._sourceNodes[i]._update(this._currentTime);
                     }
@@ -891,7 +889,8 @@ export default class VideoContext{
     }
 
     /**
-    * Destroy all nodes in the graph and reset the timeline. After calling this any created nodes will be unusable.
+    * 销毁图像中所有节点并且重置时间线
+    * 调用后创建的任何节点将无法使用
     */
     reset(){
         for (let callback of this._callbacks){
@@ -928,18 +927,18 @@ export default class VideoContext{
     }
 
     /**
-     * Get a JS Object containing the state of the VideoContext instance and all the created nodes.
+     * 获取包含videocontext实例的状态以及所有节点的js对象
      */
     snapshot () {
         return snapshot(this);
     }
 }
 
-//playing - all sources are active
-//paused - all sources are paused
-//stalled - one or more sources is unable to play
-//ended - all sources have finished playing
-//broken - the render graph is in a broken state
+//playing - 所有资源都可用
+//paused - 所有资源都暂停播放
+//stalled - 一个或多个资源无法播放
+//ended - 所有资源都已完成播放
+//broken - 图形渲染器处于中断状态
 VideoContext.STATE = {};
 VideoContext.STATE.PLAYING = 0;
 VideoContext.STATE.PAUSED = 1;

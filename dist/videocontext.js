@@ -71,37 +71,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _SourceNodesVideonodeJs2 = _interopRequireDefault(_SourceNodesVideonodeJs);
 	
-	var _SourceNodesImagenodeJs = __webpack_require__(27);
+	var _SourceNodesImagenodeJs = __webpack_require__(28);
 	
 	var _SourceNodesImagenodeJs2 = _interopRequireDefault(_SourceNodesImagenodeJs);
 	
-	var _SourceNodesCanvasnodeJs = __webpack_require__(28);
+	var _SourceNodesCanvasnodeJs = __webpack_require__(29);
 	
 	var _SourceNodesCanvasnodeJs2 = _interopRequireDefault(_SourceNodesCanvasnodeJs);
 	
 	var _SourceNodesSourcenodeJs = __webpack_require__(2);
 	
-	var _ProcessingNodesCompositingnodeJs = __webpack_require__(29);
+	var _ProcessingNodesCompositingnodeJs = __webpack_require__(30);
 	
 	var _ProcessingNodesCompositingnodeJs2 = _interopRequireDefault(_ProcessingNodesCompositingnodeJs);
 	
-	var _DestinationNodeDestinationnodeJs = __webpack_require__(32);
+	var _DestinationNodeDestinationnodeJs = __webpack_require__(33);
 	
 	var _DestinationNodeDestinationnodeJs2 = _interopRequireDefault(_DestinationNodeDestinationnodeJs);
 	
-	var _ProcessingNodesEffectnodeJs = __webpack_require__(33);
+	var _ProcessingNodesEffectnodeJs = __webpack_require__(34);
 	
 	var _ProcessingNodesEffectnodeJs2 = _interopRequireDefault(_ProcessingNodesEffectnodeJs);
 	
-	var _ProcessingNodesTransitionnodeJs = __webpack_require__(34);
+	var _ProcessingNodesTransitionnodeJs = __webpack_require__(35);
 	
 	var _ProcessingNodesTransitionnodeJs2 = _interopRequireDefault(_ProcessingNodesTransitionnodeJs);
 	
-	var _rendergraphJs = __webpack_require__(35);
+	var _rendergraphJs = __webpack_require__(36);
 	
 	var _rendergraphJs2 = _interopRequireDefault(_rendergraphJs);
 	
-	var _videoelementcacheJs = __webpack_require__(36);
+	var _videoelementcacheJs = __webpack_require__(37);
 	
 	var _videoelementcacheJs2 = _interopRequireDefault(_videoelementcacheJs);
 	
@@ -120,13 +120,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var VideoContext = (function () {
 	    /**
-	    * Initialise the VideoContext and render to the specific canvas. A 2nd parameter can be passed to the constructor which is a function that get's called if the VideoContext fails to initialise.
+	    * VideoContext类用于初始化一个videocontext对象
+	    * 第一个参数为一个canvas元素，视频画面将被渲染在这个元素上
+	    * 第二个参数为一个回调函数，在浏览器不支持webgl时自动调用
 	    *
-	    * @param {Canvas} canvas - the canvas element to render the output to.
-	    * @param {function} initErrorCallback - a callback for if initialising the canvas failed.
-	    * @param {Object} options - a nuber of custom options which can be set on the VideoContext, generally best left as default.
+	    * @param {Canvas} canvas - 输出画面到这个canvas元素上
+	    * @param {function} initErrorCallback - 初始化失败后执行的回调函数
+	    * @param {Object} options - 自定义选项，建议使用默认设置
 	    *
-	    * @example
+	    * @example 示例
 	    * var canvasElement = document.getElementById("canvas");
 	    * var ctx = new VideoContext(canvasElement, function(){console.error("Sorry, your browser dosen\'t support WebGL");});
 	    * var videoNode = ctx.video("video.mp4");
@@ -163,7 +165,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return;
 	        }
 	
-	        // Initialise the video element cache
+	        // 初始化video元素缓存
 	        if (options.useVideoElementCache === undefined) options.useVideoElementCache = true;
 	        this._useVideoElementCache = options.useVideoElementCache;
 	        if (this._useVideoElementCache) {
@@ -171,7 +173,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this._videoElementCache = new _videoelementcacheJs2["default"](options.videoElementCacheSize);
 	        }
 	
-	        // Create a unique ID for this VideoContext which can be used in the debugger.
+	        // 为videocontext创建一个可以在调试器中使用的唯一ID
 	        if (this._canvas.id) {
 	            if (typeof this._canvas.id === "string" || this._canvas.id instanceof String) {
 	                this._id = canvas.id;
@@ -206,25 +208,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 	
-	    //playing - all sources are active
-	    //paused - all sources are paused
-	    //stalled - one or more sources is unable to play
-	    //ended - all sources have finished playing
-	    //broken - the render graph is in a broken state
+	    //playing - 所有资源都可用
+	    //paused - 所有资源都暂停播放
+	    //stalled - 一个或多个资源无法播放
+	    //ended - 所有资源都已完成播放
+	    //broken - 图形渲染器处于中断状态
 	
 	    /**
-	     * Reurns an ID assigned to the VideoContext instance. This will either be the same id as the underlying canvas element,
-	     * or a uniquley generated one.
+	     * 重新分配给videcontext实例的id，可能与canvas元素的id相同
 	     */
 	
 	    _createClass(VideoContext, [{
 	        key: "registerTimelineCallback",
 	
 	        /**
-	        * Register a callback to happen at a specific point in time.
-	        * @param {number} time - the time at which to trigger the callback.
-	        * @param {Function} func - the callback to register.
-	        * @param {number} ordering - the order in which to call the callback if more than one is registered for the same time.
+	        * 注册一个在特定时间点调用的回调函数
+	        * @param {number} time - 触发回调的时间
+	        * @param {Function} func - 注册的回调函数
+	        * @param {number} ordering - 用于指定注册多个回调函数时，函数执行的顺序
 	        */
 	        value: function registerTimelineCallback(time, func) {
 	            var ordering = arguments.length <= 2 || arguments[2] === undefined ? 0 : arguments[2];
@@ -233,8 +234,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * Unregister a callback which happens at a specific point in time.
-	        * @param {Function} func - the callback to unregister.
+	        * 注销一个注册在特定时间点调用的回调函数
+	        * @param {Function} func - 需要注销的回调函数
 	        */
 	    }, {
 	        key: "unregisterTimelineCallback",
@@ -295,18 +296,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * Regsiter a callback to listen to one of the following events: "stalled", "update", "ended", "content", "nocontent"
+	        * 注册用于在监听"stalled","update","ended","content","nocontent"事件发生时调用的回调函数
+	        * "stalled"是指播放的资源不可用，任何时候停止播放都会触发的事件
+	        * "update"任何时间点，当画面帧被渲染到屏幕上时都会触发
+	        * "ended"播放停止时
+	        * "content"当播放一个或多个sourcenode，并且有内容时调用
+	        * "nocontent"没有内容
 	        *
-	        * "stalled" happend anytime playback is stopped due to unavailbale data for playing assets (i.e video still loading)
-	        * . "update" is called any time a frame is rendered to the screen. "ended" is called once plackback has finished
-	        * (i.e ctx.currentTime == ctx.duration). "content" is called a the start of a time region where there is content
-	        * playing out of one or more sourceNodes. "nocontent" is called at the start of any time region where the
-	        * VideoContext is still playing, but there are currently no activly playing soureces.
+	        * @param {String} type - 注册的事件
+	        * @param {Function} func - 注册的回调函数
 	        *
-	        * @param {String} type - the event to register against ("stalled", "update", or "ended").
-	        * @param {Function} func - the callback to register.
-	        *
-	        * @example
+	        * @example 示例
 	        * var canvasElement = document.getElementById("canvas");
 	        * var ctx = new VideoContext(canvasElement);
 	        * ctx.registerCallback("stalled", function(){console.log("Playback stalled");});
@@ -321,11 +321,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * Remove a previously registed callback
+	        * 注销回调函数
 	        *
-	        * @param {Function} func - the callback to remove.
+	        * @param {Function} func - 需要注销的回调函数
 	        *
-	        * @example
+	        * @example 示例
 	        * var canvasElement = document.getElementById("canvas");
 	        * var ctx = new VideoContext(canvasElement);
 	        *
@@ -403,17 +403,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * Get the canvas that the VideoContext is using.
+	        * 获取videocontext对象正在使用的canvas元素
 	        *
-	        * @return {HTMLElement} The canvas that the VideoContext is using.
+	        * @return {HTMLElement} videocontext对象正在使用的canvas元素
 	        *
 	        */
 	    }, {
 	        key: "play",
 	
 	        /**
-	        * Start the VideoContext playing
-	        * @example
+	        * 开始播放
+	        * @example 示例
 	        * var canvasElement = document.getElementById("canvas");
 	        * var ctx = new VideoContext(canvasElement);
 	        * var videoNode = ctx.video("video.mp4");
@@ -424,10 +424,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        */
 	        value: function play() {
 	            console.debug("VideoContext - playing");
-	            //Initialise the video elemnt cache
-	            /**
-	             * 调用videoElementCache对象的init方法初始化缓存
-	             */
+	            // 调用videoElementCache对象的init方法初始化video元素缓存
 	            if (this._videoElementCache) this._videoElementCache.init();
 	            // set the state.
 	            this._state = VideoContext.STATE.PLAYING;
@@ -435,8 +432,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * Pause playback of the VideoContext
-	        * @example
+	        * 暂停播放
+	        * @example 示例
 	        * var canvasElement = document.getElementById("canvas");
 	        * var ctx = new VideoContext(canvasElement);
 	        * var videoNode = ctx.video("video.mp4");
@@ -456,20 +453,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * Create a new node representing a video source
+	        * 创建一个新的video节点
 	        *
-	        * @param {string|Video} - The URL or video element to create the video from.
-	        * @sourceOffset {number} - Offset into the start of the source video to start playing from.
-	        * @preloadTime {number} - How many seconds before the video is to be played to start loading it.
-	        * @videoElementAttributes {Object} - A dictionary of attributes to map onto the underlying video element.
-	        * @return {VideoNode} A new video node.
+	        * @param {string|Video} - 视频播放地址或者video元素
+	        * @sourceOffset {number} - 起始时间
+	        * @preloadTime {number} - 延迟播放时间
+	        * @videoElementAttributes {Object} - video元素的属性
+	        * @return {VideoNode} video节点
 	        *
-	        * @example
+	        * @example 示例
 	        * var canvasElement = document.getElementById("canvas");
 	        * var ctx = new VideoContext(canvasElement);
 	        * var videoNode = ctx.video("video.mp4");
 	        *
-	        * @example
+	        * @example 示例
 	        * var canvasElement = document.getElementById("canvas");
 	        * var videoElement = document.getElementById("video");
 	        * var ctx = new VideoContext(canvasElement);
@@ -489,6 +486,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        /**
 	        * @depricated
+	        * 即将删除
 	        */
 	    }, {
 	        key: "createVideoSourceNode",
@@ -502,18 +500,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * Create a new node representing an image source
-	        * @param {string|Image} src - The url or image element to create the image node from.
-	        * @param {number} [preloadTime] - How long before a node is to be displayed to attmept to load it.
-	        * @param {Object} [imageElementAttributes] - Any attributes to be given to the underlying image element.
-	        * @return {ImageNode} A new image node.
+	        * 创建一个新的图像节点
+	        * @param {string|Image} src - 图像url或image元素
+	        * @param {number} [preloadTime] - 延迟显示时间
+	        * @param {Object} [imageElementAttributes] - image元素的属性
+	        * @return {ImageNode} image节点
 	        *
-	        * @example
+	        * @example 示例
 	        * var canvasElement = document.getElementById("canvas");
 	        * var ctx = new VideoContext(canvasElement);
 	        * var imageNode = ctx.image("image.png");
 	        *
-	        * @example
+	        * @example 示例
 	        * var canvasElement = document.getElementById("canvas");
 	        * var imageElement = document.getElementById("image");
 	        * var ctx = new VideoContext(canvasElement);
@@ -531,7 +529,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * @depricated
+	        * 即将删除
 	        */
 	    }, {
 	        key: "createImageSourceNode",
@@ -545,9 +543,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * Create a new node representing a canvas source
-	        * @param {Canvas} src - The canvas element to create the canvas node from.
-	        * @return {CanvasNode} A new canvas node.
+	        * 创建一个新的canvas节点
+	        * @param {Canvas} src - canvas元素
+	        * @return {CanvasNode} canvas节点
 	        */
 	    }, {
 	        key: "canvas",
@@ -558,7 +556,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * @depricated
+	        * 即将删除
 	        */
 	    }, {
 	        key: "createCanvasSourceNode",
@@ -571,21 +569,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * Create a new effect node.
-	        * @param {Object} definition - this is an object defining the shaders, inputs, and properties of the compositing node to create. Builtin definitions can be found by accessing VideoContext.DEFINITIONS.
-	        * @return {EffectNode} A new effect node created from the passed definition
+	        * 创建一个新的特效节点
+	        * @param {Object} definition - 用于定义合成节点着色器的对象，内置着色器可通过VideoContext.DEFINITIONS访问调用
+	        * @return {EffectNode} 合成节点
 	        */
 	    }, {
 	        key: "effect",
 	        value: function effect(definition) {
-	            debugger;
 	            var effectNode = new _ProcessingNodesEffectnodeJs2["default"](this._gl, this._renderGraph, definition);
 	            this._processingNodes.push(effectNode);
 	            return effectNode;
 	        }
 	
 	        /**
-	        * @depricated
+	        * 即将删除
 	        */
 	    }, {
 	        key: "createEffectNode",
@@ -595,23 +592,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * Create a new compositiing node.
+	        * 创建一个新的合成节点
 	        *
-	        * Compositing nodes are used for operations such as combining multiple video sources into a single track/connection for further processing in the graph.
+	        * 合成节点用于将多个视频组合成一个时间轴用于图形渲染器进行进一步处理
+	        * 合成节点较为特殊，它只有一个输入，但是可以与N多个节点连接
+	        * 为合成节点定义的着色器程序将会依次为每个输入运行，并将结果输出到缓冲区
+	        * 这意味着在合成节点中每一个独立的输入之间不会有影响，因为它们在单独的着色器通道中进行处理
+	        * @param {Object} definition - 用于定义合成节点着色器的对象，内置着色器可通过VideoContext.DEFINITIONS访问调用
 	        *
-	        * A compositing node is slightly different to other processing nodes in that it only has one input in it's definition but can have unlimited connections made to it.
-	        * The shader in the definition is run for each input in turn, drawing them to the output buffer. This means there can be no interaction between the spearte inputs to a compositing node, as they are individually processed in seperate shader passes.
+	        * @return {CompositingNode} 新的合成节点
 	        *
-	        * @param {Object} definition - this is an object defining the shaders, inputs, and properties of the compositing node to create. Builtin definitions can be found by accessing VideoContext.DEFINITIONS
-	        *
-	        * @return {CompositingNode} A new compositing node created from the passed definition.
-	        *
-	        * @example
+	        * @example 示例
 	        *
 	        * var canvasElement = document.getElementById("canvas");
 	        * var ctx = new VideoContext(canvasElement);
 	        *
-	        * //A simple compositing node definition which just renders all the inputs to the output buffer.
+	        * // 着色器定义对象
 	        * var combineDefinition = {
 	        *     vertexShader : "\
 	        *         attribute vec2 a_position;\
@@ -636,10 +632,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        *     },
 	        *     inputs:["u_image"]
 	        * };
-	        * //Create the node, passing in the definition.
+	        * // 通过着色器定义创建一个合成节点
 	        * var trackNode = videoCtx.compositor(combineDefinition);
 	        *
-	        * //create two videos which will play at back to back
+	        * // 创建两个连续播放的video节点
 	        * var videoNode1 = ctx.video("video1.mp4");
 	        * videoNode1.play(0);
 	        * videoNode1.stop(10);
@@ -647,12 +643,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        * videoNode2.play(10);
 	        * videoNode2.stop(20);
 	        *
-	        * //Connect the nodes to the combine node. This will give a single connection representing the two videos which can
-	        * //be connected to other effects such as LUTs, chromakeyers, etc.
+	        * // 将两个节点分别连接到合成节点，这将产生一个单一的连接，表示两个视频可以连接到其他效果
 	        * videoNode1.connect(trackNode);
 	        * videoNode2.connect(trackNode);
 	        *
-	        * //Don't do anything exciting, just connect it to the output.
+	        * // 只需要把合成节点连接到输出
 	        * trackNode.connect(ctx.destination);
 	        *
 	        */
@@ -665,7 +660,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * @depricated
+	        * 即将删除
 	        */
 	    }, {
 	        key: "createCompositingNode",
@@ -675,24 +670,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * Create a new transition node.
+	        * 创建一个新的过渡节点
 	        *
-	        * Transistion nodes are a type of effect node which have parameters which can be changed as events on the timeline.
+	        * 过渡节点是一种特效节点类型，参数可以在时间轴上作为事件进行更改
 	        *
-	        * For example a transition node which cross-fades between two videos could have a "mix" property which sets the
-	        * progress through the transistion. Rather than having to write your own code to adjust this property at specfic
-	        * points in time a transition node has a "transition" function which takes a startTime, stopTime, targetValue, and a
-	        * propertyName (which will be "mix"). This will linearly interpolate the property from the curernt value to
-	        * tragetValue between the startTime and stopTime.
+	        * 例如，在两个视频之间插入一个淡入淡出的过渡节点，它可能需要一个“mix”属性
+	        * 这个属性通过transition函数来设定进度
+	        * 转换节点不需要编写自己的代码来在特定时间调整该属性，而是通过一个transition函数
+	        * transition函数需要一个startTime，stopTime，targetValue和属性名(mix)
+	        * 这将从startTime和stopTime之间线性插入current值到targetValue属性
+	        * 
 	        *
-	        * @param {Object} definition - this is an object defining the shaders, inputs, and properties of the transition node to create.
-	        * @return {TransitionNode} A new transition node created from the passed definition.
+	        * @param {Object} definition - 用于定义合成节点着色器的对象，内置着色器可通过VideoContext.DEFINITIONS访问调用
+	        * @return {TransitionNode} 过渡节点
 	        * @example
 	        *
 	        * var canvasElement = document.getElementById("canvas");
 	        * var ctx = new VideoContext(canvasElement);
 	        *
-	        * //A simple cross-fade node definition which cross-fades between two videos based on the mix property.
+	        * // 两个视频之间淡入效果的着色器定义
 	        * var crossfadeDefinition = {
 	        *     vertexShader : "\
 	        *        attribute vec2 a_position;\
@@ -728,10 +724,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        *     inputs:["u_image_a","u_image_b"]
 	        * };
 	        *
-	        * //Create the node, passing in the definition.
+	        * // 通过着色器定义创建一个新的过渡节点
 	        * var transitionNode = videoCtx.transition(crossfadeDefinition);
 	        *
-	        * //create two videos which will overlap by two seconds
+	        * // 创建两个将会重叠2秒的视频节点
 	        * var videoNode1 = ctx.video("video1.mp4");
 	        * videoNode1.play(0);
 	        * videoNode1.stop(10);
@@ -739,17 +735,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	        * videoNode2.play(8);
 	        * videoNode2.stop(18);
 	        *
-	        * //Connect the nodes to the transistion node.
+	        * // 分别连接到过渡节点
 	        * videoNode1.connect(transitionNode);
 	        * videoNode2.connect(transitionNode);
 	        *
-	        * //Set-up a transition which happens at the crossover point of the playback of the two videos
+	        * // 设置在两个视频重叠时间点将会发生的转换
 	        * transitionNode.transition(8,10,1.0,"mix");
 	        *
-	        * //Connect the transition node to the output
+	        * // 连接过渡节点到输出
 	        * transitionNode.connect(ctx.destination);
 	        *
-	        * //start playback
+	        * // 开始播放
 	        * ctx.play();
 	        */
 	    }, {
@@ -761,7 +757,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * @depricated
+	        * 即将删除
 	        */
 	    }, {
 	        key: "createTransitionNode",
@@ -769,6 +765,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this._depricate("Warning: createTransitionNode will be depricated in v1.0, please switch to using VideoContext.transition()");
 	            return this.transition(definition);
 	        }
+	
+	        /**
+	         * 返回视频播放是否为停滞状态
+	         */
 	    }, {
 	        key: "_isStalled",
 	        value: function _isStalled() {
@@ -782,10 +782,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * This allows manual calling of the update loop of the videoContext.
+	        * 用于手动调用videocontext的更新循环
 	        *
-	        * @param {Number} dt - The difference in seconds between this and the previous calling of update.
-	        * @example
+	        * @param {Number} dt - 与之前更新调用之间的时间差
+	        * @example 示例
 	        *
 	        * var canvasElement = document.getElementById("canvas");
 	        * var ctx = new VideoContext(canvasElement, undefined, {"manualUpdate" : true});
@@ -809,7 +809,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "_update",
 	        value: function _update(dt) {
-	            //Remove any destroyed nodes
+	            // 删除所有已销毁的节点
 	            this._sourceNodes = this._sourceNodes.filter(function (sourceNode) {
 	                if (!sourceNode.destroyed) return sourceNode;
 	            });
@@ -831,7 +831,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	
 	                if (this._state === VideoContext.STATE.PLAYING) {
-	                    //Handle timeline callbacks.
+	                    // 处理时间线的回调函数
 	                    var activeCallbacks = new Map();
 	                    var _iteratorNormalCompletion5 = true;
 	                    var _didIteratorError5 = false;
@@ -842,13 +842,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            var callback = _step5.value;
 	
 	                            if (callback.time >= this.currentTime && callback.time < this._currentTime + dt * this._playbackRate) {
-	                                //group the callbacks by time
+	                                // 按播放时间将回调函数分组
 	                                if (!activeCallbacks.has(callback.time)) activeCallbacks.set(callback.time, []);
 	                                activeCallbacks.get(callback.time).push(callback);
 	                            }
 	                        }
 	
-	                        //Sort the groups of callbacks by the times of the groups
+	                        // 将回调函数组排序
 	                    } catch (err) {
 	                        _didIteratorError5 = true;
 	                        _iteratorError5 = err;
@@ -923,7 +923,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                    this._currentTime += dt * this._playbackRate;
 	                    if (this._currentTime > this.duration && this._endOnLastSourceEnd) {
-	                        //Do an update od the sourcenodes in case anything in the "ended" callbacks modifes currentTime and sources haven't had a chance to stop.
+	                        // 如果源文件并没有停止播放，且“ended”回调中任何内容修改为currentTime，则更新源节点
 	                        for (var i = 0; i < this._sourceNodes.length; i++) {
 	                            this._sourceNodes[i]._update(this._currentTime);
 	                        }
@@ -1041,7 +1041,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * Destroy all nodes in the graph and reset the timeline. After calling this any created nodes will be unusable.
+	        * 销毁图像中所有节点并且重置时间线
+	        * 调用后创建的任何节点将无法使用
 	        */
 	    }, {
 	        key: "reset",
@@ -1145,7 +1146,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: "snapshot",
 	
 	        /**
-	         * Get a JS Object containing the state of the VideoContext instance and all the created nodes.
+	         * 获取包含videocontext实例的状态以及所有节点的js对象
 	         */
 	        value: function snapshot() {
 	            return (0, _utilsJs.snapshot)(this);
@@ -1157,7 +1158,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 	
 	        /**
-	         * Set the ID of the VideoContext instance. This should be unique.
+	         * 给videocontext实例设置一个唯一的id
 	         */
 	        set: function set(newID) {
 	            delete window.__VIDEOCONTEXT_REFS__[this._id];
@@ -1172,15 +1173,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * Get the current state.
+	        * 获取当前状态
 	        *
-	        * This will be either
-	        *  - VideoContext.STATE.PLAYING: current sources on timeline are active
-	        *  - VideoContext.STATE.PAUSED: all sources are paused
-	        *  - VideoContext.STATE.STALLED: one or more sources is unable to play
-	        *  - VideoContext.STATE.ENDED: all sources have finished playing
-	        *  - VideoContext.STATE.BROKEN: the render graph is in a broken state
-	        * @return {number} The number representing the state.
+	        * 将可能返回
+	        *  - VideoContext.STATE.PLAYING: 正在播放
+	        *  - VideoContext.STATE.PAUSED: 暂停
+	        *  - VideoContext.STATE.STALLED: 一个或多个资源无法播放
+	        *  - VideoContext.STATE.ENDED: 所有资源都已播放结束
+	        *  - VideoContext.STATE.BROKEN: 渲染中断
+	        * @return {number} 状态码
 	        *
 	        */
 	    }, {
@@ -1190,12 +1191,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * Set the progress through the internal timeline.
-	        * Setting this can be used as a way to implement a scrubaable timeline.
+	        * 设置当前播放进度
+	        * 可以利用这个函数实现一个时间轴
 	        *
-	        * @param {number} currentTime - this is the currentTime to set the context to.
+	        * @param {number} currentTime - 当前时间点
 	        *
-	        * @example
+	        * @example 示例
 	        * var canvasElement = document.getElementById("canvas");
 	        * var ctx = new VideoContext(canvasElement);
 	        * var videoNode = ctx.video("video.mp4");
@@ -1225,12 +1226,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 	
 	        /**
-	        * Get how far through the internal timeline has been played.
+	        * 获取当前的播放进度
 	        *
-	        * Getting this value will give the current playhead position. Can be used for updating timelines.
-	        * @return {number} The time in seconds through the current playlist.
+	        * 获取当前播放进度，可以用来更新时间轴
+	        * @return {number} 当前播放时间点
 	        *
-	        * @example
+	        * @example 示例
 	        * var canvasElement = document.getElementById("canvas");
 	        * var ctx = new VideoContext(canvasElement);
 	        * var videoNode = ctx.video("video.mp4");
@@ -1246,11 +1247,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * Get the time at which the last node in the current internal timeline finishes playing.
+	        * 获取资源列表中最后一个资源播放结束的时间点
 	        *
-	        * @return {number} The end time in seconds of the last video node to finish playing.
+	        * @return {number} 最后一个视频资源播放结束的时间点
 	        *
-	        * @example
+	        * @example 示例
 	        * var canvasElement = document.getElementById("canvas");
 	        * var ctx = new VideoContext(canvasElement);
 	        * console.log(ctx.duration); //prints 0
@@ -1277,12 +1278,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * Get the final node in the render graph which represents the canvas to display content on to.
+	        * 获取画布渲染时最终展示画面的节点，用于显示内容
 	        *
-	        * This proprety is read-only and there can only ever be one destination node. Other nodes can connect to this but you cannot connect this node to anything.
+	        * 这是只读属性，且只能有一个节点，其他节点可以通过connect函数连接到这个节点
+	        * 但是不能讲这个节点通过connect连接到其他节点
 	        *
-	        * @return {DestinationNode} A graph node represnting the canvas to display the content on.
-	        * @example
+	        * @return {DestinationNode} 画布最终显示内容的图形节点
+	        * @example 示例
 	        * var canvasElement = document.getElementById("canvas");
 	        * var ctx = new VideoContext(canvasElement);
 	        * var videoNode = ctx.video("video.mp4");
@@ -1298,12 +1300,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	        * Set the playback rate of the VideoContext instance.
-	        * This will alter the playback speed of all media elements played through the VideoContext.
+	        * 设置videocontext实例的播放速度
+	        * 将会改变通过videocontext播放的所有媒体元素的播放速度
 	        *
-	        * @param {number} rate - this is the playback rate.
+	        * @param {number} rate - 播放速度
 	        *
-	        * @example
+	        * @example 示例
 	        * var canvasElement = document.getElementById("canvas");
 	        * var ctx = new VideoContext(canvasElement);
 	        * var videoNode = ctx.video("video.mp4");
@@ -1351,16 +1353,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 	
 	        /**
-	        *  Return the current playbackRate of the video context.
-	        * @return {number} A value representing the playbackRate. 1.0 by default.
+	        *  获取当前videocontext实例的播放速度
+	        * @return {number} 播放速度 默认为1.0
 	        */
 	        get: function get() {
 	            return this._playbackRate;
 	        }
 	
 	        /**
-	         * Set the volume of all VideoNode's created in the VideoContext.
-	         * @param {number} volume - the volume to apply to the video nodes.
+	         * 设置在videocontext实例中创建的所有videonode音量
+	         * @param {number} volume - 音量值
 	         */
 	    }, {
 	        key: "volume",
@@ -1396,8 +1398,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 	
 	        /**
-	        *  Return the current volume of the video context.
-	        * @return {number} A value representing the volume. 1.0 by default.
+	        *  获取当前音量
+	        * @return {number} 音量值 默认为1.0
 	        */
 	        get: function get() {
 	            return this._volume;
@@ -1728,7 +1730,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _utilsJs = __webpack_require__(3);
 	
-	var _graphnodeJs = __webpack_require__(26);
+	var _graphnodeJs = __webpack_require__(27);
 	
 	var _graphnodeJs2 = _interopRequireDefault(_graphnodeJs);
 	
@@ -3266,7 +3268,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _cropJs2 = _interopRequireDefault(_cropJs);
 	
-	var _cropWidthJs = __webpack_require__(37);
+	var _cropWidthJs = __webpack_require__(26);
 	
 	var _cropWidthJs2 = _interopRequireDefault(_cropWidthJs);
 	
@@ -4338,6 +4340,58 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 26 */
 /***/ (function(module, exports) {
 
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var cropWidth = {
+	    "title": "Crop",
+	    "description": "Crop images width (e.g can be used to make a black & white filter). Input color mix and output color mix can be adjusted.",
+	    "vertexShader": "\
+	          attribute vec2 a_position;\
+	          attribute vec2 a_texCoord;\
+	          varying vec2 textureCoordinate;\
+	          void main() {\
+	              gl_Position = vec4(vec2(2.0,2.0)*a_position-vec2(1.0, 1.0), 0.0, 1.0);\
+	              textureCoordinate = a_texCoord;\
+	          }",
+	    "fragmentShader": "\
+	          precision highp float;\
+	          varying highp vec2 textureCoordinate;\
+	          uniform sampler2D u_image;\
+	          uniform highp vec4 cropRect;\
+	          uniform highp vec4 dstRect;\
+	          \
+	          bool inBounds(vec2 p)\
+	          {\
+	              return ((p.x >= dstRect.x) && (p.x <= dstRect.x+dstRect.z) && (p.y >= dstRect.y) && (p.y <= dstRect.y+dstRect.w));\
+	          }\
+	          \
+	          void main()\
+	          {\
+	              if (inBounds(textureCoordinate)) {\
+	                  vec2 p = (textureCoordinate.xy - dstRect.xy)/dstRect.zw * cropRect.zw + cropRect.xy;\
+	                  gl_FragColor= texture2D(u_image, p);\
+	              }\
+	              else {\
+	                  gl_FragColor = vec4(0.0,0.0,0.0,1.0);\
+	              }\
+	          }",
+	    "properties": {
+	        "cropRect": { "type": "uniform", "value": [0.0, 0.0, 1.0, 1.0] },
+	        "dstRect": { "type": "uniform", "value": [0.0, 0.0, 1.0, 1.0] }
+	    },
+	    "inputs": ["u_image"]
+	};
+	
+	exports["default"] = cropWidth;
+	module.exports = exports["default"];
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports) {
+
 	//Matthew Shotton, R&D User Experience,© BBC 2015
 	"use strict";
 	
@@ -4524,7 +4578,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	//Matthew Shotton, R&D User Experience,© BBC 2015
@@ -4663,7 +4717,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	//Matthew Shotton, R&D User Experience,© BBC 2015
@@ -4755,7 +4809,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	//Matthew Shotton, R&D User Experience,© BBC 2015
@@ -4775,7 +4829,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var _processingnodeJs = __webpack_require__(30);
+	var _processingnodeJs = __webpack_require__(31);
 	
 	var _processingnodeJs2 = _interopRequireDefault(_processingnodeJs);
 	
@@ -4861,7 +4915,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	//Matthew Shotton, R&D User Experience,© BBC 2015
@@ -4881,13 +4935,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var _graphnodeJs = __webpack_require__(26);
+	var _graphnodeJs = __webpack_require__(27);
 	
 	var _graphnodeJs2 = _interopRequireDefault(_graphnodeJs);
 	
 	var _utilsJs = __webpack_require__(3);
 	
-	var _exceptionsJs = __webpack_require__(31);
+	var _exceptionsJs = __webpack_require__(32);
 	
 	var ProcessingNode = (function (_GraphNode) {
 	    _inherits(ProcessingNode, _GraphNode);
@@ -5130,7 +5184,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                } else if (propertyValue instanceof Image) {
 	                    var texture = this._properties[propertyName].texture;
 	                    var textureUnit = this._properties[propertyName].texutreUnit;
-	                    // updateTexture(gl, texture, propertyValue);
+	                    (0, _utilsJs.updateTexture)(gl, texture, propertyValue);
 	
 	                    gl.activeTexture(textureUnit);
 	                    gl.uniform1i(propertyLocation, textureOffset);
@@ -5153,7 +5207,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports) {
 
 	//Matthew Shotton, R&D User Experience,© BBC 2015
@@ -5176,7 +5230,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	//Matthew Shotton, R&D User Experience,© BBC 2015
@@ -5196,7 +5250,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var _ProcessingNodesProcessingnodeJs = __webpack_require__(30);
+	var _ProcessingNodesProcessingnodeJs = __webpack_require__(31);
 	
 	var _ProcessingNodesProcessingnodeJs2 = _interopRequireDefault(_ProcessingNodesProcessingnodeJs);
 	
@@ -5299,7 +5353,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	//Matthew Shotton, R&D User Experience,© BBC 2015
@@ -5319,7 +5373,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var _processingnodeJs = __webpack_require__(30);
+	var _processingnodeJs = __webpack_require__(31);
 	
 	var _processingnodeJs2 = _interopRequireDefault(_processingnodeJs);
 	
@@ -5384,7 +5438,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	//Matthew Shotton, R&D User Experience,© BBC 2015
@@ -5404,7 +5458,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var _effectnodeJs = __webpack_require__(33);
+	var _effectnodeJs = __webpack_require__(34);
 	
 	var _effectnodeJs2 = _interopRequireDefault(_effectnodeJs);
 	
@@ -5596,7 +5650,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	//Matthew Shotton, R&D User Experience,© BBC 2015
@@ -5610,7 +5664,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var _exceptionsJs = __webpack_require__(31);
+	var _exceptionsJs = __webpack_require__(32);
 	
 	var RenderGraph = (function () {
 	    /**
@@ -6036,7 +6090,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -6204,58 +6258,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	})();
 	
 	exports["default"] = VideoElementCache;
-	module.exports = exports["default"];
-
-/***/ }),
-/* 37 */
-/***/ (function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	var cropWidth = {
-	    "title": "Crop",
-	    "description": "Crop images width (e.g can be used to make a black & white filter). Input color mix and output color mix can be adjusted.",
-	    "vertexShader": "\
-	          attribute vec2 a_position;\
-	          attribute vec2 a_texCoord;\
-	          varying vec2 textureCoordinate;\
-	          void main() {\
-	              gl_Position = vec4(vec2(2.0,2.0)*a_position-vec2(1.0, 1.0), 0.0, 1.0);\
-	              textureCoordinate = a_texCoord;\
-	          }",
-	    "fragmentShader": "\
-	          precision highp float;\
-	          varying highp vec2 textureCoordinate;\
-	          uniform sampler2D u_image;\
-	          uniform highp vec4 cropRect;\
-	          uniform highp vec4 dstRect;\
-	          \
-	          bool inBounds(vec2 p)\
-	          {\
-	              return ((p.x >= dstRect.x) && (p.x <= dstRect.x+dstRect.z) && (p.y >= dstRect.y) && (p.y <= dstRect.y+dstRect.w));\
-	          }\
-	          \
-	          void main()\
-	          {\
-	              if (inBounds(textureCoordinate)) {\
-	                  vec2 p = (textureCoordinate.xy - dstRect.xy)/dstRect.zw * cropRect.zw + cropRect.xy;\
-	                  gl_FragColor= texture2D(u_image, p);\
-	              }\
-	              else {\
-	                  gl_FragColor = vec4(0.0,0.0,0.0,1.0);\
-	              }\
-	          }",
-	    "properties": {
-	        "cropRect": { "type": "uniform", "value": [0.0, 0.0, 1.0, 1.0] },
-	        "dstRect": { "type": "uniform", "value": [0.0, 0.0, 1.0, 1.0] }
-	    },
-	    "inputs": ["u_image"]
-	};
-	
-	exports["default"] = cropWidth;
 	module.exports = exports["default"];
 
 /***/ })
