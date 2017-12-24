@@ -4,17 +4,17 @@ import { ConnectException } from "./exceptions.js";
 
 class RenderGraph {
     /**
-    * Manages the rendering graph.
+    * 管理渲染图形
     */
     constructor(){
         this.connections = [];
     }
 
     /**
-    * Get a list of nodes which are connected to the output of the passed node.
+    * 获取一个通过节点连接到输出的节点列表
     * 
-    * @param {GraphNode} node - the node to get the outputs for.
-    * @return {GraphNode[]} An array of the nodes which are connected to the output.
+    * @param {GraphNode} node - 获取输出的节点
+    * @return {GraphNode[]} 通过节点连接到输出的节点列表
     */
     getOutputsForNode(node){
         let results = [];
@@ -27,10 +27,10 @@ class RenderGraph {
     }
     
     /**
-    * Get a list of nodes which are connected, by input name, to the given node. Array contains objects of the form: {"source":sourceNode, "type":"name", "name":inputName, "destination":destinationNode}.
+    * 获取通过输入名称连接到给定节点的节点列表
     *
-    * @param {GraphNode} node - the node to get the named inputs for.
-    * @return {Object[]} An array of objects representing the nodes and connection type, which are connected to the named inputs for the node.
+    * @param {GraphNode} node - 指定的输出
+    * @return {Object[]} 表示节点和连接类型的对象数组.
     */
     getNamedInputsForNode(node){
         let results = [];
@@ -43,10 +43,10 @@ class RenderGraph {
     }
 
     /**
-    * Get a list of nodes which are connected, by z-index name, to the given node. Array contains objects of the form: {"source":sourceNode, "type":"zIndex", "zIndex":0, "destination":destinationNode}.
+    * 获取通过z-index名称连接到给定节点的节点列表
     * 
-    * @param {GraphNode} node - the node to get the z-index refernced inputs for.
-    * @return {Object[]} An array of objects representing the nodes and connection type, which are connected by z-Index for the node.
+    * @param {GraphNode} node - 指定的输入节点
+    * @return {Object[]} 表示节点和连接类型的对象数组，它们由节点的z-Index连接
     */
     getZIndexInputsForNode(node){
         let results = [];
@@ -62,10 +62,10 @@ class RenderGraph {
     }
 
     /**
-    * Get a list of nodes which are connected as inputs to the given node. The length of the return array is always equal to the number of inputs for the node, with undefined taking the place of any inputs not connected.
+    * 获取作为输入连接到给定节点的节点列表。 返回数组的长度总是等于该节点的输入数量，未定义代替未连接的任何输入。
     * 
-    * @param {GraphNode} node - the node to get the inputs for.
-    * @return {GraphNode[]} An array of GraphNodes which are connected to the node.
+    * @param {GraphNode} node - 指定的输入节点
+    * @return {GraphNode[]} 连接到节点的GraphNode数组
     */
     getInputsForNode(node){
         let inputNames = node.inputNames;        
@@ -101,9 +101,9 @@ class RenderGraph {
     }
 
     /**
-    * Check if a named input on a node is available to connect too.
-    * @param {GraphNode} node - the node to check.
-    * @param {String} inputName - the named input to check.
+    * 检查节点上的命名输入是否可用来连接。
+    * @param {GraphNode} node - 需要检查的节点
+    * @param {String} inputName - 命名
     */
     isInputAvailable(node, inputName){
         if (node._inputNames.indexOf(inputName) === -1) return false;
@@ -118,20 +118,21 @@ class RenderGraph {
     }
 
     /**
-    * Register a connection between two nodes.
+    * 注册两个节点之间的连接
     * 
-    * @param {GraphNode} sourceNode - the node to connect from.
-    * @param {GraphNode} destinationNode - the node to connect to.
-    * @param {(String | number)} [target] - the target port of the conenction, this could be a string to specfiy a specific named port, a number to specify a port by index, or undefined, in which case the next available port will be connected to.
-    * @return {boolean} Will return true if connection succeeds otherwise will throw a ConnectException.
+    * @param {GraphNode} sourceNode - 要连接的节点
+    * @param {GraphNode} destinationNode - 被连接的节点 destinationNode最终将输出到画布上
+    * @param {(String | number)} [target] - conenction的目标端口，这可能是一个字符串来指定一个特定的命名端口，一个通过索引来指定一个端口的数字，或者是undefined，在这种情况下，下一个可用的端口将被连接到.
+    * @return {boolean} 如果连接成功则返回true，否则将抛出ConnectException异常
     */
     registerConnection(sourceNode, destinationNode, target){
+        // 检查destinationNode的输入量是否已达到最大数或destinationNode已经限制连接
         if (destinationNode.inputs.length >= destinationNode.inputNames.length && destinationNode._limitConnections === true){
             throw new ConnectException("Node has reached max number of inputs, can't connect");
         }
         
         if (destinationNode._limitConnections === false){
-            //check if connection is already made, if so raise a warning
+            // 检查是否已经连接，如果是的话发出警告
             const inputs = this.getInputsForNode(destinationNode);
             if (inputs.includes(sourceNode)){
                 console.debug("WARNING - node connected mutliple times, removing previous connection");
@@ -140,12 +141,12 @@ class RenderGraph {
         }
 
         if (typeof target === "number"){
-            //target is a specific
+            // 目标是一个具体的
             this.connections.push({"source":sourceNode, "type":"zIndex", "zIndex":target, "destination":destinationNode});
         } else if (typeof target === "string" && destinationNode._limitConnections){
-            //target is a named port
+            // 目标是一个指定的端口
 
-            //make sure named port is free
+            // 确保命名的端口是可用的
             if (this.isInputAvailable(destinationNode, target)){
                 this.connections.push({"source":sourceNode, "type":"name", "name":target, "destination":destinationNode});
             }else{
@@ -153,20 +154,21 @@ class RenderGraph {
             }
 
         } else{
-            //target is undefined so just make it a high zIndex
+            // 目标是未定义的，所以只是使它成为一个高zIndex
             let indexedConns = this.getZIndexInputsForNode(destinationNode);
             let index = 0;
             if (indexedConns.length > 0)index = indexedConns[indexedConns.length-1].zIndex +1;
+            // 将连接保存进连接池
             this.connections.push({"source":sourceNode, "type":"zIndex", "zIndex":index, "destination":destinationNode});
         }
         return true;
     }
     
     /**
-    * Remove a connection between two nodes.
-    * @param {GraphNode} sourceNode - the node to unregsiter connection from.
-    * @param {GraphNode} destinationNode - the node to register connection to.
-    * @return {boolean} Will return true if removing connection succeeds, or false if there was no connectionsction to remove.
+    * 删除两个节点的连接
+    * @param {GraphNode} sourceNode - 要删除连接的节点.
+    * @param {GraphNode} destinationNode - 被删除连接的节点
+    * @return {boolean} 如果删除连接成功，将返回true;如果没有要删除的连接，则返回false。
     */
     unregisterConnection(sourceNode, destinationNode){
         let toRemove = [];
