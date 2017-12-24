@@ -1,7 +1,7 @@
 //Matthew Shotton, R&D User Experience,© BBC 2015
 class GraphNode {
     /**
-    * Base class from which all processing and source nodes are derrived.
+    * 所有源节点和处理节点的基类
     */
     constructor(gl, renderGraph, inputNames, limitConnections=false){
         this._renderGraph = renderGraph;
@@ -9,7 +9,7 @@ class GraphNode {
         this._inputNames = inputNames;
         this._destroyed = false;
 
-        //Setup WebGL output texture
+        // 设置Webgl的输出纹理
         this._gl = gl;
         this._renderGraph = renderGraph;
         this._rendered =false;
@@ -17,7 +17,7 @@ class GraphNode {
     }
 
     /**
-    * Get a string representation of the class name.
+    * 获取类名
     *
     * @return String A string of the class name.
     */  
@@ -26,26 +26,26 @@ class GraphNode {
     }
 
     /**
-    * Get the names of the inputs to this node.
+    * 获取输入的名称列表
     *
     * @return {String[]} An array of the names of the inputs ot the node.
-    */    
+    */
     get inputNames(){
         return this._inputNames.slice();
     }
 
     /**
-    * The maximum number of connections that can be made to this node. If there is not limit this will return Infinity.
+    * 可以连接到此节点的最大连接数。 如果没有限制，这将返回无穷大。
     *
-    * @return {number} The number of connections which can be made to this node.
+    * @return {number} 可连接的节点最大数
     */
     get maximumConnections(){
-        if (this._limitConnections ===false) return Infinity;
+        if (this._limitConnections === false) return Infinity;
         return this._inputNames.length;
     }
 
     /**
-    * Get an array of all the nodes which connect to this node.
+    * 获取输入的节点列表
     *
     * @return {GraphNode[]} An array of nodes which connect to this node.
     */
@@ -56,7 +56,7 @@ class GraphNode {
     }
     
     /**
-    * Get an array of all the nodes which this node outputs to.
+    * 获取输出的节点列表
     *
     * @return {GraphNode[]} An array of nodes which this node connects to.
     */
@@ -65,7 +65,7 @@ class GraphNode {
     }
 
     /**
-    * Get whether the node has been destroyed or not.
+    * 获取节点是否已被销毁
     *
     * @return {boolean} A true/false value of whather the node has been destoryed or not.
     */
@@ -75,7 +75,7 @@ class GraphNode {
 
 
     /**
-    * Connect this node to the targetNode
+    * 连接一个节点到目标节点
     * 
     * @param {GraphNode} targetNode - the node to connect.
     * @param {(number| String)} [targetPort] - the port on the targetNode to connect to, this can be an index, a string identifier, or undefined (in which case the next available port will be connected to).
@@ -89,7 +89,7 @@ class GraphNode {
     }
     
     /**
-    * Disconnect this node from the targetNode. If targetNode is undefind remove all out-bound connections.
+    * 从目标节点断开此节点。 如果目标节点未定义，则删除所有输出连接。
     *
     * @param {GraphNode} [targetNode] - the node to disconnect from. If undefined, disconnect from all nodes.
     *
@@ -105,7 +105,7 @@ class GraphNode {
     }
 
     /**
-    * Destory this node, removing it from the graph.
+    * 销毁节点，从图形渲染类中删除
     */
     destroy(){
         this.disconnect();
