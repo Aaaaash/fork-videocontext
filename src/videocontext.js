@@ -36,7 +36,7 @@ export default class VideoContext{
     * ctx.play();
     *
     */
-    constructor(canvas, initErrorCallback, options={"preserveDrawingBuffer":true, "manualUpdate":false, "endOnLastSourceEnd":true, useVideoElementCache:true, videoElementCacheSize:1, webglContextAttributes: {preserveDrawingBuffer: true, alpha: false }}){
+    constructor(canvas, initErrorCallback, options={"preserveDrawingBuffer":true, "manualUpdate":false, "endOnLastSourceEnd":true, useVideoElementCache:true, videoElementCacheSize:10, webglContextAttributes: {preserveDrawingBuffer: true, alpha: false }}){
         this._canvas = canvas;
         let manualUpdate = false;
         this.endOnLastSourceEnd = true;
@@ -535,6 +535,7 @@ export default class VideoContext{
     * @return {EffectNode} A new effect node created from the passed definition
     */
     effect(definition){
+        debugger;
         let effectNode = new EffectNode(this._gl, this._renderGraph, definition);
         this._processingNodes.push(effectNode);
         return effectNode;
@@ -758,7 +759,6 @@ export default class VideoContext{
 
 
     _update(dt){
-        debugger;
         //Remove any destroyed nodes
         this._sourceNodes = this._sourceNodes.filter(sourceNode=>{
             if (!sourceNode.destroyed) return sourceNode;
@@ -884,7 +884,6 @@ export default class VideoContext{
                 if (this._sourceNodes.indexOf(node) === -1){
                     node._update(this._currentTime);
                     node._render();
-                    console.log(node);
                 }
             }
         }

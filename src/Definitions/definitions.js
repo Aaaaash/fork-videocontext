@@ -19,6 +19,7 @@ import staticEffect from "./staticEffect.js";
 import dreamfade from "./dreamfade.js";
 import opacity from "./opacity.js";
 import crop from "./crop.js";
+import cropWidth from './cropWidth.js';
 
 let DEFINITIONS = {
     AAF_VIDEO_SCALE: aaf_video_scale,
@@ -41,7 +42,8 @@ let DEFINITIONS = {
     AAF_VIDEO_FLIP: aaf_video_flip,
     AAF_VIDEO_FLOP: aaf_video_flop,
     OPACITY: opacity,
-    CROP: crop
+    CROP: crop,
+    CROP_WIDTH: cropWidth,
 };
 
 export default DEFINITIONS;

@@ -9,7 +9,6 @@ function stripHash (url){
 class VideoElementCache {
 
     constructor(cache_size = 3) {
-        debugger;
         this._elements = [];
         this._elementsInitialised = false;
         /**
@@ -38,7 +37,6 @@ class VideoElementCache {
         if (!this._elementsInitialised){
             for(let element of this._elements){
                 try {
-                    console.log(element);
                     element.play().then(()=>{
                     }, (e)=>{
                         if (e.name !== "NotSupportedError")throw(e);

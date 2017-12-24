@@ -698,7 +698,6 @@ export class UpdateablesManager{
     }
 
     _updateRAFTime(time){
-        debugger;
         if (this._previousRAFTime === undefined)this._previousRAFTime = time;
         let dt = (time - this._previousRAFTime) / 1000;
         if (dt !== 0) this._update(dt);
@@ -707,7 +706,6 @@ export class UpdateablesManager{
     }
 
     _update(dt){
-        debugger;
         for(let i = 0; i < this._updateables.length; i++){
             this._updateables[i]._update(parseFloat(dt));
 

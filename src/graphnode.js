@@ -85,7 +85,6 @@ class GraphNode {
      * 链接节点
      */
     connect(targetNode, targetPort){
-        debugger;
         return (this._renderGraph.registerConnection(this, targetNode, targetPort));
     }
     

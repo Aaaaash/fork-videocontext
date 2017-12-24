@@ -138,7 +138,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    */
 	
 	    function VideoContext(canvas, initErrorCallback) {
-	        var options = arguments.length <= 2 || arguments[2] === undefined ? { "preserveDrawingBuffer": true, "manualUpdate": false, "endOnLastSourceEnd": true, useVideoElementCache: true, videoElementCacheSize: 1, webglContextAttributes: { preserveDrawingBuffer: true, alpha: false } } : arguments[2];
+	        var options = arguments.length <= 2 || arguments[2] === undefined ? { "preserveDrawingBuffer": true, "manualUpdate": false, "endOnLastSourceEnd": true, useVideoElementCache: true, videoElementCacheSize: 10, webglContextAttributes: { preserveDrawingBuffer: true, alpha: false } } : arguments[2];
 	
 	        _classCallCheck(this, VideoContext);
 	
@@ -578,6 +578,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "effect",
 	        value: function effect(definition) {
+	            debugger;
 	            var effectNode = new _ProcessingNodesEffectnodeJs2["default"](this._gl, this._renderGraph, definition);
 	            this._processingNodes.push(effectNode);
 	            return effectNode;
@@ -808,7 +809,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "_update",
 	        value: function _update(dt) {
-	            debugger;
 	            //Remove any destroyed nodes
 	            this._sourceNodes = this._sourceNodes.filter(function (sourceNode) {
 	                if (!sourceNode.destroyed) return sourceNode;
@@ -1021,7 +1021,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        if (this._sourceNodes.indexOf(node) === -1) {
 	                            node._update(this._currentTime);
 	                            node._render();
-	                            console.log(node);
 	                        }
 	                    }
 	                } catch (err) {
@@ -1516,7 +1515,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	
 	                if (this._element.readyState > 3 && !this._element.seeking) {
-	                    debugger;
 	                    if (this._loopElement === false) {
 	                        if (this._stopTime === Infinity || this._stopTime == undefined) {
 	                            this._stopTime = this._startTime + this._element.duration;
@@ -1799,7 +1797,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _createClass(SourceNode, [{
 	        key: "_load",
 	        value: function _load() {
-	            debugger;
 	            if (!this._loadCalled) {
 	                this._triggerCallbacks("load");
 	                this._loadCalled = true;
@@ -1910,7 +1907,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "_triggerCallbacks",
 	        value: function _triggerCallbacks(type, data) {
-	            debugger;
 	            var _iteratorNormalCompletion3 = true;
 	            var _didIteratorError3 = false;
 	            var _iteratorError3 = undefined;
@@ -3145,7 +3141,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "_updateRAFTime",
 	        value: function _updateRAFTime(time) {
-	            debugger;
 	            if (this._previousRAFTime === undefined) this._previousRAFTime = time;
 	            var dt = (time - this._previousRAFTime) / 1000;
 	            if (dt !== 0) this._update(dt);
@@ -3155,7 +3150,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "_update",
 	        value: function _update(dt) {
-	            debugger;
 	            for (var i = 0; i < this._updateables.length; i++) {
 	                this._updateables[i]._update(parseFloat(dt));
 	            }
@@ -3272,6 +3266,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _cropJs2 = _interopRequireDefault(_cropJs);
 	
+	var _cropWidthJs = __webpack_require__(37);
+	
+	var _cropWidthJs2 = _interopRequireDefault(_cropWidthJs);
+	
 	var DEFINITIONS = {
 	    AAF_VIDEO_SCALE: _aaf_video_scaleJs2["default"],
 	    CROSSFADE: _crossfadeJs2["default"],
@@ -3293,7 +3291,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    AAF_VIDEO_FLIP: _aaf_video_flipJs2["default"],
 	    AAF_VIDEO_FLOP: _aaf_video_flopJs2["default"],
 	    OPACITY: _opacityJs2["default"],
-	    CROP: _cropJs2["default"]
+	    CROP: _cropJs2["default"],
+	    CROP_WIDTH: _cropWidthJs2["default"]
 	};
 	
 	exports["default"] = DEFINITIONS;
@@ -4392,7 +4391,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * 链接节点
 	         */
 	        value: function connect(targetNode, targetPort) {
-	            debugger;
 	            return this._renderGraph.registerConnection(this, targetNode, targetPort);
 	        }
 	
@@ -4905,7 +4903,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        _classCallCheck(this, ProcessingNode);
 	
-	        debugger;
 	        _get(Object.getPrototypeOf(ProcessingNode.prototype), "constructor", this).call(this, gl, renderGraph, inputNames, limitConnections);
 	        this._vertexShader = (0, _utilsJs.compileShader)(gl, definition.vertexShader, gl.VERTEX_SHADER);
 	        this._fragmentShader = (0, _utilsJs.compileShader)(gl, definition.fragmentShader, gl.FRAGMENT_SHADER);
@@ -5109,7 +5106,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            //upload/update the custom uniforms
 	            var textureOffset = 0;
-	
+	            // console.log(this._properties);
 	            for (var propertyName in this._properties) {
 	                var propertyValue = this._properties[propertyName].value;
 	                var propertyType = this._properties[propertyName].type;
@@ -5133,7 +5130,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                } else if (propertyValue instanceof Image) {
 	                    var texture = this._properties[propertyName].texture;
 	                    var textureUnit = this._properties[propertyName].texutreUnit;
-	                    (0, _utilsJs.updateTexture)(gl, texture, propertyValue);
+	                    // updateTexture(gl, texture, propertyValue);
 	
 	                    gl.activeTexture(textureUnit);
 	                    gl.uniform1i(propertyLocation, textureOffset);
@@ -5255,7 +5252,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            gl.enable(gl.BLEND);
 	            gl.clearColor(0, 0, 0, 0.0); // green;
 	            gl.clear(gl.COLOR_BUFFER_BIT);
-	            debugger;
 	            this.inputs.forEach(function (node) {
 	                _get(Object.getPrototypeOf(DestinationNode.prototype), "_render", _this).call(_this);
 	                //map the input textures input the node
@@ -5270,7 +5266,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    for (var _iterator = _this._inputTextureUnitMapping[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 	                        var mapping = _step.value;
 	
-	                        console.log('render');
 	                        gl.activeTexture(mapping.textureUnit);
 	                        var textureLocation = gl.getUniformLocation(_this._program, mapping.name);
 	                        gl.uniform1i(textureLocation, _this._parameterTextureCount + textureOffset);
@@ -5695,7 +5690,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "getInputsForNode",
 	        value: function getInputsForNode(node) {
-	            debugger;
 	            var inputNames = node.inputNames;
 	            var results = [];
 	            var namedInputs = this.getNamedInputsForNode(node);
@@ -5845,7 +5839,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "registerConnection",
 	        value: function registerConnection(sourceNode, destinationNode, target) {
-	            debugger;
 	            if (destinationNode.inputs.length >= destinationNode.inputNames.length && destinationNode._limitConnections === true) {
 	                throw new _exceptionsJs.ConnectException("Node has reached max number of inputs, can't connect");
 	            }
@@ -5863,7 +5856,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                //target is a specific
 	                this.connections.push({ "source": sourceNode, "type": "zIndex", "zIndex": target, "destination": destinationNode });
 	            } else if (typeof target === "string" && destinationNode._limitConnections) {
-	                debugger;
 	                //target is a named port
 	
 	                //make sure named port is free
@@ -5873,7 +5865,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    throw new _exceptionsJs.ConnectException("Port " + target + " is already connected to");
 	                }
 	            } else {
-	                debugger;
 	                //target is undefined so just make it a high zIndex
 	                var indexedConns = this.getZIndexInputsForNode(destinationNode);
 	                var index = 0;
@@ -6072,7 +6063,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        _classCallCheck(this, VideoElementCache);
 	
-	        debugger;
 	        this._elements = [];
 	        this._elementsInitialised = false;
 	        /**
@@ -6110,7 +6100,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        var element = _step.value;
 	
 	                        try {
-	                            console.log(element);
 	                            element.play().then(function () {}, function (e) {
 	                                if (e.name !== "NotSupportedError") throw e;
 	                            });
@@ -6215,6 +6204,58 @@ return /******/ (function(modules) { // webpackBootstrap
 	})();
 	
 	exports["default"] = VideoElementCache;
+	module.exports = exports["default"];
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var cropWidth = {
+	    "title": "Crop",
+	    "description": "Crop images width (e.g can be used to make a black & white filter). Input color mix and output color mix can be adjusted.",
+	    "vertexShader": "\
+	          attribute vec2 a_position;\
+	          attribute vec2 a_texCoord;\
+	          varying vec2 textureCoordinate;\
+	          void main() {\
+	              gl_Position = vec4(vec2(2.0,2.0)*a_position-vec2(1.0, 1.0), 0.0, 1.0);\
+	              textureCoordinate = a_texCoord;\
+	          }",
+	    "fragmentShader": "\
+	          precision highp float;\
+	          varying highp vec2 textureCoordinate;\
+	          uniform sampler2D u_image;\
+	          uniform highp vec4 cropRect;\
+	          uniform highp vec4 dstRect;\
+	          \
+	          bool inBounds(vec2 p)\
+	          {\
+	              return ((p.x >= dstRect.x) && (p.x <= dstRect.x+dstRect.z) && (p.y >= dstRect.y) && (p.y <= dstRect.y+dstRect.w));\
+	          }\
+	          \
+	          void main()\
+	          {\
+	              if (inBounds(textureCoordinate)) {\
+	                  vec2 p = (textureCoordinate.xy - dstRect.xy)/dstRect.zw * cropRect.zw + cropRect.xy;\
+	                  gl_FragColor= texture2D(u_image, p);\
+	              }\
+	              else {\
+	                  gl_FragColor = vec4(0.0,0.0,0.0,1.0);\
+	              }\
+	          }",
+	    "properties": {
+	        "cropRect": { "type": "uniform", "value": [0.0, 0.0, 1.0, 1.0] },
+	        "dstRect": { "type": "uniform", "value": [0.0, 0.0, 1.0, 1.0] }
+	    },
+	    "inputs": ["u_image"]
+	};
+	
+	exports["default"] = cropWidth;
 	module.exports = exports["default"];
 
 /***/ })

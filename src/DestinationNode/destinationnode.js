@@ -45,7 +45,6 @@ class DestinationNode extends ProcessingNode {
         gl.enable(gl.BLEND);
         gl.clearColor(0, 0, 0, 0.0); // green;
         gl.clear(gl.COLOR_BUFFER_BIT);
-        debugger;
         this.inputs.forEach((node)=>{
             super._render();
             //map the input textures input the node
@@ -53,7 +52,6 @@ class DestinationNode extends ProcessingNode {
             let textureOffset = 0;
 
             for(let mapping of this._inputTextureUnitMapping ){
-                console.log('render');
                 gl.activeTexture(mapping.textureUnit);
                 let textureLocation = gl.getUniformLocation(this._program, mapping.name);
                 gl.uniform1i(textureLocation, this._parameterTextureCount + textureOffset);

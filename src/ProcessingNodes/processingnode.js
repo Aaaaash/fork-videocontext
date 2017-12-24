@@ -10,7 +10,6 @@ class ProcessingNode extends GraphNode{
     * This class is not used directly, but is extended to create CompositingNodes, TransitionNodes, and EffectNodes.
     */
     constructor(gl, renderGraph, definition, inputNames, limitConnections){
-        debugger;
         super(gl, renderGraph, inputNames, limitConnections);
         this._vertexShader = compileShader(gl, definition.vertexShader, gl.VERTEX_SHADER);
         this._fragmentShader = compileShader(gl, definition.fragmentShader, gl.FRAGMENT_SHADER);
@@ -185,7 +184,7 @@ class ProcessingNode extends GraphNode{
 
         //upload/update the custom uniforms
         let textureOffset = 0;
-
+        // console.log(this._properties);
         for (let propertyName in this._properties){
             let propertyValue = this._properties[propertyName].value;
             let propertyType = this._properties[propertyName].type;

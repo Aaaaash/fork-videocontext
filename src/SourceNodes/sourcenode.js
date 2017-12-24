@@ -125,7 +125,6 @@ class SourceNode extends GraphNode{
     }
 
     _load(){
-        debugger;
         if (!this._loadCalled){
             this._triggerCallbacks("load");
             this._loadCalled = true;
@@ -187,7 +186,6 @@ class SourceNode extends GraphNode{
     }
 
     _triggerCallbacks(type, data){
-        debugger;
         for(let callback of this._callbacks){
             if (callback.type === type){
                 if (data!== undefined){

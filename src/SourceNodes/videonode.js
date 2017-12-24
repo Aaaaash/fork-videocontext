@@ -80,7 +80,6 @@ class VideoNode extends SourceNode {
             }
 
             if (this._element.readyState > 3 && !this._element.seeking){
-                debugger;
                 if(this._loopElement === false){
                     if (this._stopTime === Infinity || this._stopTime == undefined){
                         this._stopTime = this._startTime + this._element.duration;

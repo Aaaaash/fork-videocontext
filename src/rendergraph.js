@@ -68,7 +68,6 @@ class RenderGraph {
     * @return {GraphNode[]} An array of GraphNodes which are connected to the node.
     */
     getInputsForNode(node){
-        debugger;
         let inputNames = node.inputNames;        
         let results = [];
         let namedInputs = this.getNamedInputsForNode(node);
@@ -127,7 +126,6 @@ class RenderGraph {
     * @return {boolean} Will return true if connection succeeds otherwise will throw a ConnectException.
     */
     registerConnection(sourceNode, destinationNode, target){
-        debugger;
         if (destinationNode.inputs.length >= destinationNode.inputNames.length && destinationNode._limitConnections === true){
             throw new ConnectException("Node has reached max number of inputs, can't connect");
         }
@@ -145,7 +143,6 @@ class RenderGraph {
             //target is a specific
             this.connections.push({"source":sourceNode, "type":"zIndex", "zIndex":target, "destination":destinationNode});
         } else if (typeof target === "string" && destinationNode._limitConnections){
-            debugger;
             //target is a named port
 
             //make sure named port is free
@@ -156,7 +153,6 @@ class RenderGraph {
             }
 
         } else{
-            debugger;
             //target is undefined so just make it a high zIndex
             let indexedConns = this.getZIndexInputsForNode(destinationNode);
             let index = 0;
