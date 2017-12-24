@@ -3,8 +3,8 @@ import SourceNode, { SOURCENODESTATE } from "./sourcenode.js";
 
 class ImageNode extends SourceNode {
     /**
-    * Initialise an instance of an ImageNode.
-    * This should not be called directly, but created through a call to videoContext.createImageNode();
+    * 实例化一个图像节点
+    * 这不应该被直接调用，而是通过videocontext.image方法实例化
     */
     constructor(src, gl, renderGraph, currentTime, preloadTime = 4, attributes = {}){
         super(src, gl, renderGraph, currentTime);
@@ -46,7 +46,7 @@ class ImageNode extends SourceNode {
         this._element.onerror = () => {
             console.debug("Error with element", this._element);
             this._state = SOURCENODESTATE.error;
-            //Event though there's an error ready should be set to true so the node can output transparenn
+            // 即使有错误，也应该将其设置为true，以便节点可以输出透明
             this._ready = true;
             this._triggerCallbacks("error");
         };
@@ -74,7 +74,6 @@ class ImageNode extends SourceNode {
     }
 
     _update(currentTime){
-        //if (!super._update(currentTime)) return false;
         if (this._textureUploaded){
             super._update(currentTime, false);
         }else{

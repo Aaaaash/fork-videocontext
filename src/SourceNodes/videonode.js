@@ -3,8 +3,8 @@ import SourceNode, { SOURCENODESTATE } from "./sourcenode.js";
 
 class VideoNode extends SourceNode {
     /**
-    * Initialise an instance of a VideoNode.
-    * This should not be called directly, but created through a call to videoContext.createVideoNode();
+    * 初始化一个video节点实例
+    * 这个类不能直接实例化，应该通过videocontext.video方法调用
     */
     
     /**
@@ -36,6 +36,7 @@ class VideoNode extends SourceNode {
         this._displayName = "VideoNode";
     }
 
+    // 设置播放速度
     set playbackRate(playbackRate){
         this._playbackRate = playbackRate;
         this._playbackRateUpdated = true;
@@ -79,6 +80,7 @@ class VideoNode extends SourceNode {
                 this._element[key] = this._attributes[key];
             }
 
+            // 判断视频是否就绪且不是正在跳转状态
             if (this._element.readyState > 3 && !this._element.seeking){
                 if(this._loopElement === false){
                     if (this._stopTime === Infinity || this._stopTime == undefined){
@@ -101,10 +103,12 @@ class VideoNode extends SourceNode {
             }
             return;
         }
+        // 如果可以管理video元素生命周期，则从videoElementCache中获取一个可用的video缓存
         if (this._isResponsibleForElementLifeCycle){
             if (this._videoElementCache){
                 this._element = this._videoElementCache.get();
             }else{
+                // 如果没有videoElementCache 则创建一个video元素赋值给this._element
                 this._element = document.createElement("video");
                 this._element.setAttribute("crossorigin", "anonymous");
                 this._element.setAttribute("webkit-playsinline", "");
@@ -130,18 +134,19 @@ class VideoNode extends SourceNode {
                 if (this._element === undefined) return;
                 console.debug("Error with element", this._element);
                 this._state = SOURCENODESTATE.error;
-                //Event though there's an error ready should be set to true so the node can output transparenn
+                // 即使有错误，也应该将其设置为true，以便节点可以输出透明
                 this._ready = true;
                 this._triggerCallbacks("error");
             };
         }else{
-            //If the element doesn't exist for whatever reason enter the error state.
+            // 如果元素因任何原因不存在，则进入错误状态
             this._state = SOURCENODESTATE.error;
             this._ready = true;
             this._triggerCallbacks("error");
         }
     }
 
+    // 卸载元素，删除所有属性
     _unload(){
         super._unload();
         if (this._isResponsibleForElementLifeCycle && this._element !== undefined){
@@ -157,6 +162,7 @@ class VideoNode extends SourceNode {
         this._isElementPlaying = false;
     }
 
+    // 跳转播放时间
     _seek(time){
         super._seek(time);
         if (this.state === SOURCENODESTATE.playing || this.state === SOURCENODESTATE.paused){
@@ -170,10 +176,14 @@ class VideoNode extends SourceNode {
         }
     }
 
+    /**
+     * 更新视频
+     * @param {number} 当前时间 
+     */
     _update(currentTime){
-        //if (!super._update(currentTime)) return false;
+        // 如果 super._update(currentTime) 返回false，则返回false
         super._update(currentTime);
-        //check if the video has ended
+        // 检查视频是否已经结束
         if(this._element !== undefined){
             if (this._element.ended){
                 this._state = SOURCENODESTATE.ended;
@@ -183,9 +193,8 @@ class VideoNode extends SourceNode {
 
         if (this._startTime - this._currentTime < this._preloadTime && this._state !== SOURCENODESTATE.waiting && this._state !== SOURCENODESTATE.ended)this._load();
 
-        if (this._state === SOURCENODESTATE.playing){
-            if (this._playbackRateUpdated)
-            {
+        if (this._state === SOURCENODESTATE.playing) {
+            if (this._playbackRateUpdated) {
                 this._element.playbackRate = this._globalPlaybackRate * this._playbackRate;
                 this._playbackRateUpdated = false;
             }
@@ -201,8 +210,7 @@ class VideoNode extends SourceNode {
             this._element.pause();
             this._isElementPlaying = false;
             return true;
-        }
-        else if (this._state === SOURCENODESTATE.ended && this._element !== undefined){
+        } else if (this._state === SOURCENODESTATE.ended && this._element !== undefined){
             this._element.pause();
             if (this._isElementPlaying){
                 this._unload();
@@ -211,6 +219,7 @@ class VideoNode extends SourceNode {
         }
     }
 
+    // 清楚时间线的状态
     clearTimelineState(){
         super.clearTimelineState();
         if (this._element !== undefined) {
@@ -220,6 +229,7 @@ class VideoNode extends SourceNode {
         this._unload();
     }
 
+    // 销毁节点
     destroy(){
         if (this._element) this._element.pause();
         super.destroy();

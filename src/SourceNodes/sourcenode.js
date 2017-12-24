@@ -21,7 +21,7 @@ class SourceNode extends GraphNode{
             // 从传递的url或MediaStream中创建节点
             this._elementURL = src;
         }else{
-            // 使用传递的元素来创建SourceNode
+            // 如果src是一个video对象，则由开发者自行管理video元素的生命周期，将src赋值给this._element
             this._element = src;
             this._isResponsibleForElementLifeCycle = false;
         }

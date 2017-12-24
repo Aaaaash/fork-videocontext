@@ -3,8 +3,8 @@ import SourceNode, { SOURCENODESTATE } from "./sourcenode.js";
 
 class CanvasNode extends SourceNode {
     /**
-    * Initialise an instance of a CanvasNode.
-    * This should not be called directly, but created through a call to videoContext.createCanvasNode();
+    * 实例化一个canvas节点
+    * 应该通过videocontext.canvas方法实例化
     */
     constructor(canvas, gl, renderGraph, currentTime, preloadTime = 4){
         super(canvas, gl, renderGraph, currentTime);
@@ -35,7 +35,6 @@ class CanvasNode extends SourceNode {
     }
     
     _update(currentTime){
-        //if (!super._update(currentTime)) return false;
         super._update(currentTime);
         if (this._startTime - this._currentTime < this._preloadTime && this._state !== SOURCENODESTATE.waiting && this._state !== SOURCENODESTATE.ended)this._load();
 
