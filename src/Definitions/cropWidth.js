@@ -1,7 +1,9 @@
 let cropWidth = {
-  "title":"Crop",
-  "description": "Crop images width (e.g can be used to make a black & white filter). Input color mix and output color mix can be adjusted.",
-  "vertexShader" : "\
+    title: "Crop",
+    description:
+        "Crop images width (e.g can be used to make a black & white filter). Input color mix and output color mix can be adjusted.",
+    vertexShader:
+        "\
           attribute vec2 a_position;\
           attribute vec2 a_texCoord;\
           varying vec2 textureCoordinate;\
@@ -9,7 +11,8 @@ let cropWidth = {
               gl_Position = vec4(vec2(2.0,2.0)*a_position-vec2(1.0, 1.0), 0.0, 1.0);\
               textureCoordinate = a_texCoord;\
           }",
-  "fragmentShader" : "\
+    fragmentShader:
+        "\
           precision highp float;\
           varying highp vec2 textureCoordinate;\
           uniform sampler2D u_image;\
@@ -31,11 +34,11 @@ let cropWidth = {
                   gl_FragColor = vec4(0.0,0.0,0.0,1.0);\
               }\
           }",
-  "properties":{
-      "cropRect":{"type":"uniform", "value":[0.0,0.0,1.0,1.0]},
-      "dstRect":{"type":"uniform", "value":[0.0,0.0,1.0,1.0]}
-  },
-  "inputs":["u_image"]
+    properties: {
+        cropRect: { type: "uniform", value: [0.0, 0.0, 1.0, 1.0] },
+        dstRect: { type: "uniform", value: [0.0, 0.0, 1.0, 1.0] }
+    },
+    inputs: ["u_image"]
 };
 
 export default cropWidth;

@@ -3,9 +3,6 @@ import ProcessingNode from "./processingnode.js";
 import { createElementTexutre } from "../utils.js";
 
 class CompositingNode extends ProcessingNode{
-    /**
-    * Initialise an instance of a Compositing Node. You should not instantiate this directly, but use VideoContest.createCompositingNode().
-    */
     constructor(gl, renderGraph, definition){
         let placeholderTexture = createElementTexutre(gl);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0,0,0,0]));
@@ -15,7 +12,7 @@ class CompositingNode extends ProcessingNode{
     }
 
     _render(){
-        let gl = this._gl;        
+        let gl = this._gl;
         gl.bindFramebuffer(gl.FRAMEBUFFER, this._framebuffer);
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._texture,0);
         gl.clearColor(0, 0, 0, 0); // green;

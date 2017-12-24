@@ -4,21 +4,16 @@ import { compileShader, createShaderProgram, createElementTexutre, updateTexture
 import { RenderException } from "../exceptions.js";
 
 class ProcessingNode extends GraphNode{
-    /**
-    * Initialise an instance of a ProcessingNode.
-    *
-    * This class is not used directly, but is extended to create CompositingNodes, TransitionNodes, and EffectNodes.
-    */
     constructor(gl, renderGraph, definition, inputNames, limitConnections){
         super(gl, renderGraph, inputNames, limitConnections);
         this._vertexShader = compileShader(gl, definition.vertexShader, gl.VERTEX_SHADER);
         this._fragmentShader = compileShader(gl, definition.fragmentShader, gl.FRAGMENT_SHADER);
         this._definition = definition;
-        this._properties = {};//definition.properties;
-        //copy definition properties
+        this._properties = {}; // definition.properties;
+        // copy definition properties
         for(let propertyName in definition.properties){
             let propertyValue = definition.properties[propertyName].value;
-            //if an array then shallow copy it
+            // if an array then shallow copy it
             if(Object.prototype.toString.call(propertyValue) === "[object Array]"){
                 propertyValue = definition.properties[propertyName].value.slice();
             }
@@ -33,7 +28,7 @@ class ProcessingNode extends GraphNode{
         this._inputTextureCount = 0;
         this._texture = createElementTexutre(gl);
         gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGBA, gl.canvas.width, gl.canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-        //compile the shader
+        // 编译着色器
         this._program = createShaderProgram(gl, this._vertexShader, this._fragmentShader);
 
         //create and setup the framebuffer

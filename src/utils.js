@@ -13,7 +13,6 @@ import { SOURCENODESTATE } from "./SourceNodes/sourcenode.js";
 *
 */
 export function compileShader(gl, shaderSource, shaderType) {
-    debugger;
     let shader = gl.createShader(shaderType);
     gl.shaderSource(shader, shaderSource);
     gl.compileShader(shader);
