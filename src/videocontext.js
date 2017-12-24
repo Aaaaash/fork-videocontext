@@ -20,13 +20,15 @@ let updateablesManager = new UpdateablesManager();
  */
 export default class VideoContext{
     /**
-    * Initialise the VideoContext and render to the specific canvas. A 2nd parameter can be passed to the constructor which is a function that get's called if the VideoContext fails to initialise.
+    * VideoContext类用于初始化一个videocontext对象
+    * 第一个参数为一个canvas元素，视频画面将被渲染在这个元素上
+    * 第二个参数为一个回调函数，在浏览器不支持webgl时自动调用
     *
-    * @param {Canvas} canvas - the canvas element to render the output to.
-    * @param {function} initErrorCallback - a callback for if initialising the canvas failed.
-    * @param {Object} options - a nuber of custom options which can be set on the VideoContext, generally best left as default.
+    * @param {Canvas} canvas - 输出画面到这个canvas元素上
+    * @param {function} initErrorCallback - 初始化失败后执行的回调函数
+    * @param {Object} options - 自定义选项，建议使用默认设置
     *
-    * @example
+    * @example 示例
     * var canvasElement = document.getElementById("canvas");
     * var ctx = new VideoContext(canvasElement, function(){console.error("Sorry, your browser dosen\'t support WebGL");});
     * var videoNode = ctx.video("video.mp4");
@@ -59,7 +61,7 @@ export default class VideoContext{
             return;
         }
 
-        // Initialise the video element cache
+        // 初始化video元素缓存
         if(options.useVideoElementCache === undefined) options.useVideoElementCache = true;
         this._useVideoElementCache = options.useVideoElementCache;
         if (this._useVideoElementCache){
@@ -67,7 +69,7 @@ export default class VideoContext{
             this._videoElementCache = new VideoElementCache(options.videoElementCacheSize);
         }
         
-        // Create a unique ID for this VideoContext which can be used in the debugger.
+        // 为videocontext创建一个可以在调试器中使用的唯一ID
         if(this._canvas.id) {
             if (typeof this._canvas.id === "string" || this._canvas.id instanceof String){
                 this._id = canvas.id;
@@ -104,15 +106,14 @@ export default class VideoContext{
     }
 
     /**
-     * Reurns an ID assigned to the VideoContext instance. This will either be the same id as the underlying canvas element,
-     * or a uniquley generated one.
+     * 重新分配给videcontext实例的id，可能与canvas元素的id相同
      */
     get id(){
         return this._id;
     }
 
     /**
-     * Set the ID of the VideoContext instance. This should be unique.
+     * 给videocontext实例设置一个唯一的id
      */
     set id(newID){
         delete window.__VIDEOCONTEXT_REFS__[this._id];
@@ -122,10 +123,10 @@ export default class VideoContext{
     }
 
     /**
-    * Register a callback to happen at a specific point in time.
-    * @param {number} time - the time at which to trigger the callback.
-    * @param {Function} func - the callback to register.
-    * @param {number} ordering - the order in which to call the callback if more than one is registered for the same time.
+    * 注册一个在特定时间点调用的回调函数
+    * @param {number} time - 触发回调的时间
+    * @param {Function} func - 注册的回调函数
+    * @param {number} ordering - 用于指定注册多个回调函数时，函数执行的顺序
     */
     registerTimelineCallback(time, func, ordering= 0){
         this._timelineCallbacks.push({"time":time, "func":func, "ordering":ordering});
@@ -133,8 +134,8 @@ export default class VideoContext{
 
 
     /**
-    * Unregister a callback which happens at a specific point in time.
-    * @param {Function} func - the callback to unregister.
+    * 注销一个注册在特定时间点调用的回调函数
+    * @param {Function} func - 需要注销的回调函数
     */
     unregisterTimelineCallback(func){
         let toRemove = [];
@@ -150,18 +151,17 @@ export default class VideoContext{
     }
 
     /**
-    * Regsiter a callback to listen to one of the following events: "stalled", "update", "ended", "content", "nocontent"
+    * 注册用于在监听"stalled","update","ended","content","nocontent"事件发生时调用的回调函数
+    * "stalled"是指播放的资源不可用，任何时候停止播放都会触发的事件
+    * "update"任何时间点，当画面帧被渲染到屏幕上时都会触发
+    * "ended"播放停止时
+    * "content"当播放一个或多个sourcenode，并且有内容时调用
+    * "nocontent"没有内容
     *
-    * "stalled" happend anytime playback is stopped due to unavailbale data for playing assets (i.e video still loading)
-    * . "update" is called any time a frame is rendered to the screen. "ended" is called once plackback has finished
-    * (i.e ctx.currentTime == ctx.duration). "content" is called a the start of a time region where there is content
-    * playing out of one or more sourceNodes. "nocontent" is called at the start of any time region where the
-    * VideoContext is still playing, but there are currently no activly playing soureces.
+    * @param {String} type - 注册的事件
+    * @param {Function} func - 注册的回调函数
     *
-    * @param {String} type - the event to register against ("stalled", "update", or "ended").
-    * @param {Function} func - the callback to register.
-    *
-    * @example
+    * @example 示例
     * var canvasElement = document.getElementById("canvas");
     * var ctx = new VideoContext(canvasElement);
     * ctx.registerCallback("stalled", function(){console.log("Playback stalled");});
@@ -174,11 +174,11 @@ export default class VideoContext{
     }
 
     /**
-    * Remove a previously registed callback
+    * 注销回调函数
     *
-    * @param {Function} func - the callback to remove.
+    * @param {Function} func - 需要注销的回调函数
     *
-    * @example
+    * @example 示例
     * var canvasElement = document.getElementById("canvas");
     * var ctx = new VideoContext(canvasElement);
     *
@@ -210,9 +210,9 @@ export default class VideoContext{
     }
 
     /**
-    * Get the canvas that the VideoContext is using.
+    * 获取videocontext对象正在使用的canvas元素
     *
-    * @return {HTMLElement} The canvas that the VideoContext is using.
+    * @return {HTMLElement} videocontext对象正在使用的canvas元素
     *
     */
     get element(){
@@ -220,15 +220,15 @@ export default class VideoContext{
     }
 
     /**
-    * Get the current state.
+    * 获取当前状态
     *
-    * This will be either
-    *  - VideoContext.STATE.PLAYING: current sources on timeline are active
-    *  - VideoContext.STATE.PAUSED: all sources are paused
-    *  - VideoContext.STATE.STALLED: one or more sources is unable to play
-    *  - VideoContext.STATE.ENDED: all sources have finished playing
-    *  - VideoContext.STATE.BROKEN: the render graph is in a broken state
-    * @return {number} The number representing the state.
+    * 将可能返回
+    *  - VideoContext.STATE.PLAYING: 正在播放
+    *  - VideoContext.STATE.PAUSED: 暂停
+    *  - VideoContext.STATE.STALLED: 一个或多个资源无法播放
+    *  - VideoContext.STATE.ENDED: 所有资源都已播放结束
+    *  - VideoContext.STATE.BROKEN: 渲染中断
+    * @return {number} 状态码
     *
     */
     get state(){
@@ -236,12 +236,12 @@ export default class VideoContext{
     }
 
     /**
-    * Set the progress through the internal timeline.
-    * Setting this can be used as a way to implement a scrubaable timeline.
+    * 设置当前播放进度
+    * 可以利用这个函数实现一个时间轴
     *
-    * @param {number} currentTime - this is the currentTime to set the context to.
+    * @param {number} currentTime - 当前时间点
     *
-    * @example
+    * @example 示例
     * var canvasElement = document.getElementById("canvas");
     * var ctx = new VideoContext(canvasElement);
     * var videoNode = ctx.video("video.mp4");
@@ -269,12 +269,12 @@ export default class VideoContext{
     }
 
     /**
-    * Get how far through the internal timeline has been played.
+    * 获取当前的播放进度
     *
-    * Getting this value will give the current playhead position. Can be used for updating timelines.
-    * @return {number} The time in seconds through the current playlist.
+    * 获取当前播放进度，可以用来更新时间轴
+    * @return {number} 当前播放时间点
     *
-    * @example
+    * @example 示例
     * var canvasElement = document.getElementById("canvas");
     * var ctx = new VideoContext(canvasElement);
     * var videoNode = ctx.video("video.mp4");
@@ -290,11 +290,11 @@ export default class VideoContext{
     }
 
     /**
-    * Get the time at which the last node in the current internal timeline finishes playing.
+    * 获取资源列表中最后一个资源播放结束的时间点
     *
-    * @return {number} The end time in seconds of the last video node to finish playing.
+    * @return {number} 最后一个视频资源播放结束的时间点
     *
-    * @example
+    * @example 示例
     * var canvasElement = document.getElementById("canvas");
     * var ctx = new VideoContext(canvasElement);
     * console.log(ctx.duration); //prints 0
@@ -320,12 +320,13 @@ export default class VideoContext{
 
 
     /**
-    * Get the final node in the render graph which represents the canvas to display content on to.
+    * 获取画布渲染时最终展示画面的节点，用于显示内容
     *
-    * This proprety is read-only and there can only ever be one destination node. Other nodes can connect to this but you cannot connect this node to anything.
+    * 这是只读属性，且只能有一个节点，其他节点可以通过connect函数连接到这个节点
+    * 但是不能讲这个节点通过connect连接到其他节点
     *
-    * @return {DestinationNode} A graph node represnting the canvas to display the content on.
-    * @example
+    * @return {DestinationNode} 画布最终显示内容的图形节点
+    * @example 示例
     * var canvasElement = document.getElementById("canvas");
     * var ctx = new VideoContext(canvasElement);
     * var videoNode = ctx.video("video.mp4");
@@ -339,12 +340,12 @@ export default class VideoContext{
     }
 
     /**
-    * Set the playback rate of the VideoContext instance.
-    * This will alter the playback speed of all media elements played through the VideoContext.
+    * 设置videocontext实例的播放速度
+    * 将会改变通过videocontext播放的所有媒体元素的播放速度
     *
-    * @param {number} rate - this is the playback rate.
+    * @param {number} rate - 播放速度
     *
-    * @example
+    * @example 示例
     * var canvasElement = document.getElementById("canvas");
     * var ctx = new VideoContext(canvasElement);
     * var videoNode = ctx.video("video.mp4");
@@ -369,8 +370,8 @@ export default class VideoContext{
 
 
     /**
-    *  Return the current playbackRate of the video context.
-    * @return {number} A value representing the playbackRate. 1.0 by default.
+    *  获取当前videocontext实例的播放速度
+    * @return {number} 播放速度 默认为1.0
     */
     get playbackRate(){
         return this._playbackRate;
@@ -378,8 +379,8 @@ export default class VideoContext{
 
 
     /**
-     * Set the volume of all VideoNode's created in the VideoContext.
-     * @param {number} volume - the volume to apply to the video nodes.
+     * 设置在videocontext实例中创建的所有videonode音量
+     * @param {number} volume - 音量值
      */
     set volume(vol){
         for (let node of this._sourceNodes){
@@ -391,8 +392,8 @@ export default class VideoContext{
     }
 
     /**
-    *  Return the current volume of the video context.
-    * @return {number} A value representing the volume. 1.0 by default.
+    *  获取当前音量
+    * @return {number} 音量值 默认为1.0
     */
     get volume(){
         return this._volume;
