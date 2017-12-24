@@ -145,8 +145,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _classCallCheck(this, VideoContext);
 	
 	        this._canvas = canvas;
+	
+	        /**
+	         * manualUpdate 默认为false，表示自动更新
+	         * 将会使用UpdateablesManager类来管理videocontext自动更新
+	         * 如果设为true，则videocontext需要开发者设定一个定时器调用videocontext的_update方法进行手动更新
+	         */
 	        var manualUpdate = false;
+	
+	        /**
+	         * endOnLastSourceEnd 当所有源节点播放完毕时触发ended事件， 默认为true
+	         */
 	        this.endOnLastSourceEnd = true;
+	        /**
+	         * webglcontext默认设置
+	         * preserveDrawingBuffer 保存绘图到缓冲区
+	         * alpha alpha通道
+	         */
 	        var webglContextAttributes = { preserveDrawingBuffer: true, alpha: false };
 	
 	        if ("manualUpdate" in options) manualUpdate = options.manualUpdate;
@@ -158,9 +173,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            console.error("webglContextAttributes.alpha must be false for correct opeation");
 	        }
 	
+	        /**
+	         * 获取webgl绘图上下文，并传入配置对象
+	         */
 	        this._gl = canvas.getContext("experimental-webgl", webglContextAttributes);
 	        if (this._gl === null) {
 	            console.error("Failed to intialise WebGL.");
+	            // 如果初始化失败则调用失败的回调函数
 	            if (initErrorCallback) initErrorCallback();
 	            return;
 	        }
@@ -169,7 +188,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (options.useVideoElementCache === undefined) options.useVideoElementCache = true;
 	        this._useVideoElementCache = options.useVideoElementCache;
 	        if (this._useVideoElementCache) {
+	            // 设置video元素缓存大小（表示最多可以操作多少个video元素）
 	            if (!options.videoElementCacheSize) options.videoElementCacheSize = 5;
+	            // 传入缓存大小并创建一个videoElementCache对象保存到this._videoElementCache
 	            this._videoElementCache = new _videoelementcacheJs2["default"](options.videoElementCacheSize);
 	        }
 	
@@ -183,6 +204,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (window.__VIDEOCONTEXT_REFS__ === undefined) window.__VIDEOCONTEXT_REFS__ = {};
 	        window.__VIDEOCONTEXT_REFS__[this._id] = this;
 	
+	        // 各项属性初始化
 	        this._renderGraph = new _rendergraphJs2["default"]();
 	        this._sourceNodes = [];
 	        this._processingNodes = [];
@@ -192,6 +214,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._playbackRate = 1.0;
 	        this._volume = 1.0;
 	        this._sourcesPlaying = undefined;
+	        /**
+	         * 目标节点，最终将所有图像绘制到画布上的节点
+	         * 参数为webgl绘图上下文对象以及图形渲染对象
+	         */
 	        this._destinationNode = new _DestinationNodeDestinationnodeJs2["default"](this._gl, this._renderGraph);
 	
 	        this._callbacks = new Map();
@@ -203,6 +229,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        this._timelineCallbacks = [];
 	
+	        // 如果未设置手动更新，则调用更新管理器对象的注册方法传入videocontext的this用于自动更新
 	        if (!manualUpdate) {
 	            updateablesManager.register(this);
 	        }
@@ -372,6 +399,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            return false;
 	        }
+	
+	        /**
+	         * 手动触发事件
+	         * @param {string} type - 需要手动触发的事件类型
+	         */
 	    }, {
 	        key: "_callCallbacks",
 	        value: function _callCallbacks(type) {
@@ -426,7 +458,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            console.debug("VideoContext - playing");
 	            // 调用videoElementCache对象的init方法初始化video元素缓存
 	            if (this._videoElementCache) this._videoElementCache.init();
-	            // set the state.
+	            // 将当前状态修改为Playing
 	            this._state = VideoContext.STATE.PLAYING;
 	            return true;
 	        }
@@ -479,7 +511,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var preloadTime = arguments.length <= 2 || arguments[2] === undefined ? 4 : arguments[2];
 	            var videoElementAttributes = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
 	
+	            /**
+	             * 创建一个video节点
+	             * 传入播放地址(或video元素)，webgl对象，图形渲染器，当前时间点，播放速度，起始时间，延迟时间，video元素缓存以及video元素的属性
+	             */
 	            var videoNode = new _SourceNodesVideonodeJs2["default"](src, this._gl, this._renderGraph, this._currentTime, this._playbackRate, sourceOffset, preloadTime, this._videoElementCache, videoElementAttributes);
+	            // 将创建的video节点保存到this._sourceNodes中
 	            this._sourceNodes.push(videoNode);
 	            return videoNode;
 	        }
@@ -523,6 +560,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var preloadTime = arguments.length <= 1 || arguments[1] === undefined ? 4 : arguments[1];
 	            var imageElementAttributes = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 	
+	            /**
+	             * 创建一个图像节点
+	             */
 	            var imageNode = new _SourceNodesImagenodeJs2["default"](src, this._gl, this._renderGraph, this._currentTime, preloadTime, imageElementAttributes);
 	            this._sourceNodes.push(imageNode);
 	            return imageNode;
@@ -577,6 +617,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: "effect",
 	        value: function effect(definition) {
 	            var effectNode = new _ProcessingNodesEffectnodeJs2["default"](this._gl, this._renderGraph, definition);
+	            // 将特效节点保存在this._processingNods中
 	            this._processingNodes.push(effectNode);
 	            return effectNode;
 	        }
@@ -774,6 +815,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function _isStalled() {
 	            for (var i = 0; i < this._sourceNodes.length; i++) {
 	                var sourceNode = this._sourceNodes[i];
+	                // sourceNode中包含_isReady属性表示当前资源是否可用
 	                if (!sourceNode._isReady()) {
 	                    return true;
 	                }
@@ -809,15 +851,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "_update",
 	        value: function _update(dt) {
-	            // 删除所有已销毁的节点
+	            // 删除所有已销毁的源节点
 	            this._sourceNodes = this._sourceNodes.filter(function (sourceNode) {
+	                // sourceNode中包含destroyed表示当前资源是否已销毁
 	                if (!sourceNode.destroyed) return sourceNode;
 	            });
 	
+	            // 删除所有已销毁的处理节点
 	            this._processingNodes = this._processingNodes.filter(function (processingNode) {
+	                // processingNode中包含destroyed表示当前资源是否已销毁
 	                if (!processingNode.destroyed) return processingNode;
 	            });
 	
+	            // 只要当前状态不是ended或broken都会触发update事件
 	            if (this._state === VideoContext.STATE.PLAYING || this._state === VideoContext.STATE.STALLED || this._state === VideoContext.STATE.PAUSED) {
 	                this._callCallbacks("update");
 	
@@ -937,6 +983,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                for (var i = 0; i < this._sourceNodes.length; i++) {
 	                    var sourceNode = this._sourceNodes[i];
 	
+	                    // 如果当前为停滞状态，且源节点可用且正在播放，则暂停播放源节点
 	                    if (this._state === VideoContext.STATE.STALLED) {
 	                        if (sourceNode._isReady() && sourceNode._state === _SourceNodesSourcenodeJs.SOURCENODESTATE.playing) sourceNode._pause();
 	                    }
@@ -1269,6 +1316,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: "duration",
 	        get: function get() {
 	            var maxTime = 0;
+	            /**
+	             * 遍历源节点数组中所有的可用资源，得到最大的停止时间
+	             */
 	            for (var i = 0; i < this._sourceNodes.length; i++) {
 	                if (this._sourceNodes[i].state !== _SourceNodesSourcenodeJs.SOURCENODESTATE.waiting && this._sourceNodes[i]._stopTime > maxTime) {
 	                    maxTime = this._sourceNodes[i]._stopTime;
