@@ -3,13 +3,13 @@ import DEFINITIONS from "./Definitions/definitions.js";
 import { SOURCENODESTATE } from "./SourceNodes/sourcenode.js";
 
 /*
-* Utility function to compile a WebGL Vertex or Fragment shader.
+* 创建和编译着色器
 *
-* @param {WebGLRenderingContext} gl - the webgl context fo which to build the shader.
-* @param {String} shaderSource - A string of shader code to compile.
-* @param {number} shaderType - Shader type, either WebGLRenderingContext.VERTEX_SHADER or WebGLRenderingContext.FRAGMENT_SHADER.
+* @param {WebGLRenderingContext} gl - webgl上下文对象
+* @param {String} shaderSource - 着色器源码
+* @param {number} shaderType - 着色器类型
 *
-* @return {WebGLShader} A compiled shader.
+* @return {WebGLShader} 编译后的着色器
 *
 */
 export function compileShader(gl, shaderSource, shaderType) {
@@ -24,13 +24,13 @@ export function compileShader(gl, shaderSource, shaderType) {
 }
 
 /*
-* Create a shader program from a passed vertex and fragment shader source string.
+* 创建着色器程序并添加给webgl对象
 *
-* @param {WebGLRenderingContext} gl - the webgl context fo which to build the shader.
-* @param {WebGLShader} vertexShader - A compiled vertex shader.
-* @param {WebGLShader} fragmentShader - A compiled fragment shader.
+* @param {WebGLRenderingContext} gl - webgl上下文对象
+* @param {WebGLShader} vertexShader - 编译后的顶点着色器
+* @param {WebGLShader} fragmentShader - 编译后的片段着色器
 *
-* @return {WebGLProgram} A compiled & linkde shader program.
+* @return {WebGLProgram} 链接后的着色器程序
 */
 export function createShaderProgram(gl, vertexShader, fragmentShader){
     let program = gl.createProgram();
@@ -517,7 +517,6 @@ export function createSigmaGraphDataFromRenderGraph(videoContext){
 
 
 export function importSimpleEDL(ctx, playlist){
-    debugger;
     // Create a "track" node to connect all the clips to.
     let trackNode = ctx.compositor(DEFINITIONS.COMBINE);
 

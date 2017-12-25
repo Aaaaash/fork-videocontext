@@ -1060,7 +1060,6 @@ export default class VideoContext {
                     }
                 }
             }
-
             for (let node of sortedNodes) {
                 if (this._sourceNodes.indexOf(node) === -1) {
                     node._update(this._currentTime);

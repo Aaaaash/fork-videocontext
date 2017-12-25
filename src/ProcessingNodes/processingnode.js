@@ -6,6 +6,7 @@ import { RenderException } from "../exceptions.js";
 class ProcessingNode extends GraphNode{
     constructor(gl, renderGraph, definition, inputNames, limitConnections){
         super(gl, renderGraph, inputNames, limitConnections);
+        // 创建并编译顶点着色器和片段着色器
         this._vertexShader = compileShader(gl, definition.vertexShader, gl.VERTEX_SHADER);
         this._fragmentShader = compileShader(gl, definition.fragmentShader, gl.FRAGMENT_SHADER);
         this._definition = definition;
@@ -28,11 +29,12 @@ class ProcessingNode extends GraphNode{
         this._inputTextureCount = 0;
         this._texture = createElementTexutre(gl);
         gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGBA, gl.canvas.width, gl.canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-        // 编译着色器
+        // 链接着色器程序
         this._program = createShaderProgram(gl, this._vertexShader, this._fragmentShader);
 
         // 创建一个帧缓冲区
         this._framebuffer = gl.createFramebuffer();
+        // 绑定片段缓冲区
         gl.bindFramebuffer(gl.FRAMEBUFFER, this._framebuffer);
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._texture,0);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
