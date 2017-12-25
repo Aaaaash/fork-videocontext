@@ -9,11 +9,11 @@ class ProcessingNode extends GraphNode{
         this._vertexShader = compileShader(gl, definition.vertexShader, gl.VERTEX_SHADER);
         this._fragmentShader = compileShader(gl, definition.fragmentShader, gl.FRAGMENT_SHADER);
         this._definition = definition;
-        this._properties = {}; // definition.properties;
-        // copy definition properties
+        this._properties = {}; // 缓存着色器属性
+        // 复制着色器定义中的属性
         for(let propertyName in definition.properties){
             let propertyValue = definition.properties[propertyName].value;
-            // if an array then shallow copy it
+            // 如果是数组就浅拷贝
             if(Object.prototype.toString.call(propertyValue) === "[object Array]"){
                 propertyValue = definition.properties[propertyName].value.slice();
             }
@@ -31,13 +31,13 @@ class ProcessingNode extends GraphNode{
         // 编译着色器
         this._program = createShaderProgram(gl, this._vertexShader, this._fragmentShader);
 
-        //create and setup the framebuffer
+        // 创建一个帧缓冲区
         this._framebuffer = gl.createFramebuffer();
         gl.bindFramebuffer(gl.FRAMEBUFFER, this._framebuffer);
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._texture,0);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
-        //create properties on this object for the passed properties
+        // 在这个对象上为传递的属性创建属性
         for (let propertyName in this._properties){
             Object.defineProperty(this, propertyName, {
                 get:function(){return this._properties[propertyName].value;},
@@ -45,7 +45,7 @@ class ProcessingNode extends GraphNode{
             });
         }
 
-        //create texutres for any texture properties
+        // 为任何纹理属性创建纹理
         for (let propertyName in this._properties){
             let propertyValue = this._properties[propertyName].value;
             if (propertyValue instanceof Image){
@@ -59,7 +59,7 @@ class ProcessingNode extends GraphNode{
             }
         }
 
-        //calculate texutre units for input textures
+        // 计算输入纹理的纹理单位
         for(let inputName of definition.inputs){
             this._inputTextureUnitMapping.push({name:inputName, textureUnit:gl.TEXTURE0 + this._boundTextureUnits});
             this._boundTextureUnits += 1;
@@ -70,7 +70,7 @@ class ProcessingNode extends GraphNode{
         }
 
 
-        //find the locations of the properties in the compiled shader
+        // 在编译的着色器中找到属性的位置
         for (let propertyName in this._properties){
             if (this._properties[propertyName].type === "uniform"){
                 this._properties[propertyName].location = this._gl.getUniformLocation(this._program, propertyName);
@@ -80,7 +80,6 @@ class ProcessingNode extends GraphNode{
         this._currentTime = 0;
 
 
-        //Other setup
         let positionLocation = gl.getAttribLocation(this._program, "a_position");
         let buffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -104,27 +103,27 @@ class ProcessingNode extends GraphNode{
     }
 
     /**
-    * Sets the passed processing node property to the passed value.
-    * @param {string} name - The name of the processing node parameter to modify.
-    * @param {Object} value - The value to set it to.
+    * 将传递的值设为节点的属性
+    * @param {string} name - 要修改的处理节点参数的名称
+    * @param {Object} value - 值
     *
-    * @example 
+    * @example 示例
     * var ctx = new VideoContext();
     * var monoNode = ctx.effect(VideoContext.DEFINITIONS.MONOCHROME);
-    * monoNode.setProperty("inputMix", [1.0,0.0,0.0]); //Just use red channel
+    * monoNode.setProperty("inputMix", [1.0,0.0,0.0]);
     */
     setProperty(name, value){
         this._properties[name].value = value;
     }
 
     /**
-    * Sets the passed processing node property to the passed value.
-    * @param {string} name - The name of the processing node parameter to get.
+    * 通过属性名获取节点上属性的值
+    * @param {string} name - 属性名
     *
     * @example 
     * var ctx = new VideoContext();
     * var monoNode = ctx.effect(VideoContext.DEFINITIONS.MONOCHROME);
-    * console.log(monoNode.getProperty("inputMix")); //Will output [0.4,0.6,0.2], the default value from the effect definition.
+    * console.log(monoNode.getProperty("inputMix"));
     * 
     */
     getProperty(name){
@@ -132,11 +131,10 @@ class ProcessingNode extends GraphNode{
     }
 
     /**
-    * Destroy and clean-up the node.
+    * 销毁节点
     */
     destroy(){
         super.destroy();
-        //destrpy texutres for any texture properties
         for (let propertyName in this._properties){
             let propertyValue = this._properties[propertyName].value;
             if (propertyValue instanceof Image){
@@ -144,18 +142,18 @@ class ProcessingNode extends GraphNode{
                 this._texture = undefined;
             }
         }
-        //Destroy main
+        // 销毁纹理
         this._gl.deleteTexture(this._texture);
         this._texture = undefined;
-        //Detach shaders
+        // 分离着色器
         this._gl.detachShader(this._program, this._vertexShader);
         this._gl.detachShader(this._program, this._fragmentShader);
-        //Delete shaders
+        // 删除着色器
         this._gl.deleteShader(this._vertexShader);
         this._gl.deleteShader(this._fragmentShader);
-        //Delete program
+        // 删除着色器程序
         this._gl.deleteProgram(this._program);
-        //Delete Framebuffer
+        // 删除帧缓冲区
         this._gl.deleteFramebuffer(this._framebuffer);
     }
 
@@ -179,7 +177,6 @@ class ProcessingNode extends GraphNode{
 
         //upload/update the custom uniforms
         let textureOffset = 0;
-        // console.log(this._properties);
         for (let propertyName in this._properties){
             let propertyValue = this._properties[propertyName].value;
             let propertyType = this._properties[propertyName].type;
