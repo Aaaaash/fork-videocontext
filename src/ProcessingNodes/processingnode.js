@@ -6,6 +6,7 @@ import { RenderException } from "../exceptions.js";
 class ProcessingNode extends GraphNode{
     constructor(gl, renderGraph, definition, inputNames, limitConnections){
         super(gl, renderGraph, inputNames, limitConnections);
+        debugger;
         // 创建并编译顶点着色器和片段着色器
         this._vertexShader = compileShader(gl, definition.vertexShader, gl.VERTEX_SHADER);
         this._fragmentShader = compileShader(gl, definition.fragmentShader, gl.FRAGMENT_SHADER);
